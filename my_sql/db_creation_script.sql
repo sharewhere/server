@@ -17,7 +17,8 @@ create table users (
     rank_id         int not null,
     zip_code        varchar(10),
     email_address   varchar(30) not null,
-    primary key (ridername)    
+    primary key (username), 
+    foreign key (rank_id) references ranks(rank_id)    
 );
 
 create table ranks (
