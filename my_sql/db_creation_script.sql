@@ -4,10 +4,40 @@ drop database if exists ShareWhereTest;
 # create a new database named project3
 create database ShareWhereTest;
 
+#This checks if the user already exists and drops it if
+#it does.
+#This is a workaround for the lack of "if user exists"
+DROP PROCEDURE IF EXISTS ShareWhereTest.drop_user_if_exists ;
+DELIMITER $$
+CREATE PROCEDURE ShareWhereTest.drop_user_if_exists()
+BEGIN
+  DECLARE foo BIGINT DEFAULT 0 ;
+  SELECT COUNT(*)
+  INTO foo
+    FROM mysql.user
+      WHERE User = 'ShareWhereUser' and  Host = 'localhost';
+   IF foo > 0 THEN
+         DROP USER 'ShareWhereUser'@'localhost' ;
+  END IF;
+END ;$$
+DELIMITER ;
+CALL ShareWhereTest.drop_user_if_exists() ;
+DROP PROCEDURE IF EXISTS ShareWhereTest.drop_users_if_exists ;
+
+#Create the ShareWhereUser on your local DB.
+CREATE USER 'ShareWhereUser'@'localhost' IDENTIFIED BY 'N3onIced';
+GRANT ALL ON ShareWhereTest.* TO 'ShareWhereUser'@'localhost';
+
+
 # switch to the new database
 use ShareWhereTest;
 
-# create the schemas for the four relations in this database
+create table ranks (
+    rank_id         int auto_increment,
+    rank_title      varchar(30) not null,
+    primary key (rank_id)
+);
+
 create table users (
     username varchar(30) not null,
     password varchar(128) not null,
@@ -19,12 +49,6 @@ create table users (
     email_address   varchar(30) not null,
     primary key (username), 
     foreign key (rank_id) references ranks(rank_id)    
-);
-
-create table ranks (
-    rank_id         int auto_increment,
-    rank_title      varchar(30) not null,
-    primary key (rank_id)
 );
 
 create table shareables (

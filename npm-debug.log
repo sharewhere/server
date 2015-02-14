@@ -1,29 +1,57 @@
 0 info it worked if it ends with ok
 1 verbose cli [ 'C:\\Program Files\\nodejs\\\\node.exe',
 1 verbose cli   'C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js',
-1 verbose cli   'init' ]
+1 verbose cli   'install',
+1 verbose cli   'felixge/node-mysql' ]
 2 info using npm@1.4.28
 3 info using node@v0.10.36
 4 verbose node symlink C:\Program Files\nodejs\\node.exe
-5 silly package data undefined
-6 info init written successfully
-7 error Error: Invalid name: "npm install express --save"
-7 error     at ensureValidName (C:\Program Files\nodejs\node_modules\npm\node_modules\read-package-json\node_modules\normalize-package-data\lib\fixer.js:315:15)
-7 error     at Object.module.exports.fixNameField (C:\Program Files\nodejs\node_modules\npm\node_modules\read-package-json\node_modules\normalize-package-data\lib\fixer.js:204:5)
-7 error     at C:\Program Files\nodejs\node_modules\npm\node_modules\read-package-json\node_modules\normalize-package-data\lib\normalize.js:30:38
-7 error     at Array.forEach (native)
-7 error     at normalize (C:\Program Files\nodejs\node_modules\npm\node_modules\read-package-json\node_modules\normalize-package-data\lib\normalize.js:29:15)
-7 error     at final (C:\Program Files\nodejs\node_modules\npm\node_modules\read-package-json\read-json.js:342:33)
-7 error     at then (C:\Program Files\nodejs\node_modules\npm\node_modules\read-package-json\read-json.js:126:33)
-7 error     at C:\Program Files\nodejs\node_modules\npm\node_modules\read-package-json\read-json.js:316:48
-7 error     at evalmachine.<anonymous>:208:20
-7 error     at OpenReq.Req.done (C:\Program Files\nodejs\node_modules\npm\node_modules\graceful-fs\graceful-fs.js:141:5)
-8 error If you need help, you may report this *entire* log,
-8 error including the npm and node versions, at:
-8 error     <http://github.com/npm/npm/issues>
-9 error System Windows_NT 6.2.9200
-10 error command "C:\\Program Files\\nodejs\\\\node.exe" "C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js" "init"
-11 error cwd c:\NodeApps\ExpressTestApp
-12 error node -v v0.10.36
-13 error npm -v 1.4.28
-14 verbose exit [ 1, true ]
+5 warn package.json session@0.1.0 bugs['web'] should probably be bugs['url'].
+6 verbose cache add [ 'felixge/node-mysql', null ]
+7 verbose cache add name=undefined spec="felixge/node-mysql" args=["felixge/node-mysql",null]
+8 verbose parsed url { protocol: null,
+8 verbose parsed url   slashes: null,
+8 verbose parsed url   auth: null,
+8 verbose parsed url   host: null,
+8 verbose parsed url   port: null,
+8 verbose parsed url   hostname: null,
+8 verbose parsed url   hash: null,
+8 verbose parsed url   search: null,
+8 verbose parsed url   query: null,
+8 verbose parsed url   pathname: 'felixge/node-mysql',
+8 verbose parsed url   path: 'felixge/node-mysql',
+8 verbose parsed url   href: 'felixge/node-mysql' }
+9 silly lockFile 4f4f7be1-felixge-node-mysql felixge/node-mysql
+10 verbose lock felixge/node-mysql C:\Users\Jimmy\AppData\Roaming\npm-cache\4f4f7be1-felixge-node-mysql.lock
+11 info maybeGithub Attempting felixge/node-mysql from git://github.com/felixge/node-mysql
+12 silly lockFile a6c4cfee-it-github-com-felixge-node-mysql git://github.com/felixge/node-mysql
+13 verbose lock git://github.com/felixge/node-mysql C:\Users\Jimmy\AppData\Roaming\npm-cache\a6c4cfee-it-github-com-felixge-node-mysql.lock
+14 verbose addRemoteGit [ 'git://github.com/felixge/node-mysql', 'master' ]
+15 verbose git clone git://github.com/felixge/node-mysql undefined
+15 verbose git clone git://github.com/felixge/node-mysql undefined
+16 silly lockFile a6c4cfee-it-github-com-felixge-node-mysql git://github.com/felixge/node-mysql
+17 silly lockFile a6c4cfee-it-github-com-felixge-node-mysql git://github.com/felixge/node-mysql
+18 info maybeGithub Attempting felixge/node-mysql from git+ssh://git@github.com:felixge/node-mysql
+19 silly lockFile 246b2140-it-github-com-felixge-node-mysql git@github.com:felixge/node-mysql
+20 verbose lock git@github.com:felixge/node-mysql C:\Users\Jimmy\AppData\Roaming\npm-cache\246b2140-it-github-com-felixge-node-mysql.lock
+21 verbose addRemoteGit [ 'git@github.com:felixge/node-mysql', 'master' ]
+22 error git clone git@github.com:felixge/node-mysql undefined
+22 error git clone git@github.com:felixge/node-mysql undefined
+23 silly lockFile 246b2140-it-github-com-felixge-node-mysql git@github.com:felixge/node-mysql
+24 silly lockFile 246b2140-it-github-com-felixge-node-mysql git@github.com:felixge/node-mysql
+25 silly lockFile 4f4f7be1-felixge-node-mysql felixge/node-mysql
+26 silly lockFile 4f4f7be1-felixge-node-mysql felixge/node-mysql
+27 error addLocal Could not install felixge/node-mysql
+28 error Error: ENOENT, stat 'C:\src\repos\server\felixge\node-mysql'
+29 error If you need help, you may report this *entire* log,
+29 error including the npm and node versions, at:
+29 error     <http://github.com/npm/npm/issues>
+30 error System Windows_NT 6.2.9200
+31 error command "C:\\Program Files\\nodejs\\\\node.exe" "C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js" "install" "felixge/node-mysql"
+32 error cwd C:\src\repos\server
+33 error node -v v0.10.36
+34 error npm -v 1.4.28
+35 error path C:\src\repos\server\felixge\node-mysql
+36 error code ENOENT
+37 error errno 34
+38 verbose exit [ 34, true ]
