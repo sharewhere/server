@@ -36,6 +36,7 @@ create table shareables (
     foreign key (username) references users(username)
 );
 
+#exposed, requested, negotiating, shared, unavailable.
 create table shareable_state (
 	state_id        int auto_increment,
     state_name      varchar(30) not null,
