@@ -13,10 +13,8 @@ connection.query('SELECT * from ranks', function(err, rows, fields) {
 
  var numRows = rows.length;
 
- for(var i=0;i<numRows;i++){
-	 console.log(rows[i]['rank_title']);
- } 
- 
+ console.log(rows);
+ console.log(Object.keys(rows[0]));
 
   
 });

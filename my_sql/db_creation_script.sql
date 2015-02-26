@@ -25,7 +25,7 @@ CALL ShareWhereTest.drop_user_if_exists() ;
 DROP PROCEDURE IF EXISTS ShareWhereTest.drop_users_if_exists ;
 
 #Create the ShareWhereUser on your local DB.
-CREATE USER 'ShareWhereUser'@'localhost' IDENTIFIED BY 'N3onIced';
+CREATE USER 'ShareWhereUser'@'localhost' IDENTIFIED BY 'N3onIc3d';
 GRANT ALL ON ShareWhereTest.* TO 'ShareWhereUser'@'localhost';
 
 
@@ -40,7 +40,6 @@ create table ranks (
 
 create table users (
     username varchar(30) not null,
-    password varchar(128) not null,
     salt     varchar(20) not null,
     activation_date date not null,
     last_login      date,
@@ -52,7 +51,7 @@ create table users (
 );
 
 create table shareables (
-	shar_id        int auto_increment,
+    shar_id        int auto_increment,
     shar_name      varchar(30) not null,
     description    varchar(500),
     username       varchar(30) not null,
@@ -62,7 +61,7 @@ create table shareables (
 
 #exposed, requested, negotiating, shared, unavailable.
 create table shareable_state (
-	state_id        int auto_increment,
+    state_id        int auto_increment,
     state_name      varchar(30) not null,
     primary key (state_id)
 );
@@ -77,3 +76,17 @@ create table sessions (
      primary key (session_id),
      foreign key (username) references users(username)
 );
+
+
+#Dummy data for testing the database
+
+#Create data for ranks table
+insert into ranks (rank_title)
+values ("Newbie");
+insert into ranks (rank_title)
+values ("Getting there");
+insert into ranks (rank_title)
+values ("Master");
+
+INSERT INTO users (username, salt, activation_date, last_login, rank_id, zip_code, email_address)
+VALUES ( tj, , CURDATE(), CURDATE(), (SELECT rank_id FROM ranks WHERE rank_title = "Newbie"), 32816, c@c.c);
