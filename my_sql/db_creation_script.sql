@@ -60,7 +60,7 @@ create table shareables (
     foreign key (username) references users(username)
 );
 
-#exposed, requested, negotiating, shared, unavailable.
+#hidden, requesting, offering, requested_received_offer, offered_received_request, reserved, lent/borrowed, returned.
 create table shareable_state (
     state_id        int auto_increment,
     state_name      varchar(30) not null,

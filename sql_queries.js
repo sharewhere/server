@@ -33,13 +33,22 @@ module.exports={
 			console.log("addUser queryString: "+queryString);
 			
 			conn = mysql.createConnection(dbInfo);
-			
 			conn.query(queryString, function(err, rows, fields){
 				fn(err, rows, fields);
 			});
-			
 			conn.end();
 		});
+	},
+	
+	removeUser: function(dbInfo, username, fn){
+		if(!username) throw new Error("no username set in removeUser");
+		queryString = "delete from users where username = '"+username+"';";
+		
+		conn = mysql.createConnection(dbInfo);
+		conn.query(queryString, function(err, rows, fields){
+			fn(err, rows, fields);
+		});
+		conn.end();
 	},
 	
 	addShareable: function(conn, shareable, fn)

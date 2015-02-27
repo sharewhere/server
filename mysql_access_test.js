@@ -10,6 +10,7 @@ var connection = mysql.createConnection(dbInfo);
 
 var connectionTesting = false;
 var addUserTesting = true;
+var removeUserTesting = false;
 
 
 connection.connect();
@@ -38,6 +39,16 @@ if(addUserTesting){
 	sql_queries.addUser(dbInfo, testUser, function(err, rows, fields){
 		if(err){
 			console.log("error in test addUser: "+err);
+		}
+		console.log(rows);
+	});
+}
+
+if(removeUserTesting){
+	console.log("Attempting to remove user %j", testUser);
+	sql_queries.removeUser(dbInfo, testUser.username, function(err, rows, fields){
+		if(err){
+			console.log("error in test removeUser: "+err);
 		}
 		console.log(rows);
 	});
