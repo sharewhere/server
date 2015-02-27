@@ -1,11 +1,12 @@
 var mysql      = require('mysql');
 var sql_queries = require('./sql_queries');
-var connection = mysql.createConnection({
+var dbInfo = {
   host     : 'localhost',
   user     : 'ShareWhereUser',
   password : 'N3onIc3d',
   database : 'sharewheretest'
-});
+};
+var connection = mysql.createConnection(dbInfo);
 
 var connectionTesting = false;
 var addUserTesting = true;
@@ -34,10 +35,12 @@ var testUser = {
 
 if(addUserTesting){
     console.log("Attempting to add user %j", testUser);
-	sql_queries.addUser(connection, testUser, function(err, rows, fields){
+	sql_queries.addUser(dbInfo, testUser, function(err, rows, fields){
 		if(err){
 			console.log("error in test addUser: "+err);
 		}
 		console.log(rows);
 	});
 }
+
+connection.end();

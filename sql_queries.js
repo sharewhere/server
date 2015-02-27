@@ -1,8 +1,9 @@
 var hash = require('./pass').hash;
+var mysql      = require('mysql');
 
 module.exports={
 	//User must have username, password, and email_address defined for addition to database.
-addUser: function(conn, user, fn)
+	addUser: function(dbInfo, user, fn)
 	{
 		if(!user.username){
 			throw new Error("no username set in addUser");
@@ -31,9 +32,18 @@ addUser: function(conn, user, fn)
 			queryString = queryString +"');";
 			console.log("addUser queryString: "+queryString);
 			
+			conn = mysql.createConnection(dbInfo);
+			
 			conn.query(queryString, function(err, rows, fields){
 				fn(err, rows, fields);
 			});
+			
+			conn.end();
 		});
+	},
+	
+	addShareable: function(conn, shareable, fn)
+	{
+		
 	}
 }
