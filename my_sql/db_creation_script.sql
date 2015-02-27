@@ -41,6 +41,7 @@ create table ranks (
 create table users (
     username varchar(30) not null,
     salt     varchar(20) not null,
+    hash_code     varchar(40) not null,
     activation_date date not null,
     last_login      date,
     rank_id         int not null,
@@ -88,5 +89,5 @@ values ("Getting there");
 insert into ranks (rank_title)
 values ("Master");
 
-INSERT INTO users (username, salt, activation_date, last_login, rank_id, zip_code, email_address)
-VALUES ( tj, , CURDATE(), CURDATE(), (SELECT rank_id FROM ranks WHERE rank_title = "Newbie"), 32816, c@c.c);
+INSERT INTO users (username, salt, hash_code, activation_date, last_login, rank_id, zip_code, email_address)
+VALUES ( 'tj', '12345678901234567890', 'fdfd75ed7db53c8c4f44d715bc64e8e8cff070ef', CURDATE(), CURDATE(), (SELECT rank_id FROM ranks WHERE rank_title = "Newbie"), '32816', 'c@c.c');

@@ -8,7 +8,7 @@ var connection = mysql.createConnection({
 
 connection.connect();
 
-connection.query('SELECT * from ranks', function(err, rows, fields) {
+connection.query("SELECT * from users where username = 'tj'", function(err, rows, fields) {
   if (err) throw err;
 
  var numRows = rows.length;
