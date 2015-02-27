@@ -51,20 +51,22 @@ create table users (
     foreign key (rank_id) references ranks(rank_id)    
 );
 
+#hidden, requesting, offering, requested_received_offer, offered_received_request, reserved, lent/borrowed, returned.
+create table shareable_states (
+    state_id        int auto_increment,
+    state_name      varchar(30) not null,
+    primary key (state_id)
+);
+
 create table shareables (
     shar_id        int auto_increment,
     shar_name      varchar(30) not null,
     description    varchar(500),
     username       varchar(30) not null,
+    state_id       int,
     primary key (shar_id),
-    foreign key (username) references users(username)
-);
-
-#hidden, requesting, offering, requested_received_offer, offered_received_request, reserved, lent/borrowed, returned.
-create table shareable_state (
-    state_id        int auto_increment,
-    state_name      varchar(30) not null,
-    primary key (state_id)
+    foreign key (username) references users(username),
+    foreign key (state_id) references shareable_states(state_id)
 );
 
 #create table transactions (
@@ -82,12 +84,31 @@ create table sessions (
 #Dummy data for testing the database
 
 #Create data for ranks table
-insert into ranks (rank_title)
-values ("Newbie");
-insert into ranks (rank_title)
-values ("Getting there");
-insert into ranks (rank_title)
-values ("Master");
+INSERT INTO ranks (rank_title)
+VALUES 
+("Newbie"),
+("Getting there"),
+("Master");
 
-INSERT INTO users (username, salt, hash_code, activation_date, last_login, rank_id, zip_code, email_address)
-VALUES ( 'tj', '12345678901234567890', 'fdfd75ed7db53c8c4f44d715bc64e8e8cff070ef', CURDATE(), CURDATE(), (SELECT rank_id FROM ranks WHERE rank_title = "Newbie"), '32816', 'c@c.c');
+INSERT INTO users 
+(username, salt, hash_code, activation_date, last_login, rank_id, zip_code, email_address)
+VALUES 
+( 'tj', '12345678901234567890', 'fdfd75ed7db53c8c4f44d715bc64e8e8cff070ef', CURDATE(), CURDATE(), (SELECT rank_id FROM ranks WHERE rank_title = "Newbie"), '32816', 'c@c.c');
+
+INSERT INTO shareable_states 
+(state_name)
+VALUES
+("hidden"),
+("requesting"),
+("offering"),
+("requested_received_offer"),
+("offered_received_request"),
+("reserved"),
+("lent/borrowed"),
+("returned");
+
+INSERT INTO shareables 
+(shar_name, description, username, state_id)
+VALUES 
+('Shovel', 'I need a shovel in order to install sprinkers in my lawn', 'tj', (select state_id from shareable_states where state_name = 'requesting')),
+('N64 controller', 'Anybody need this? I know it\'s rare!', 'tj', (select state_id from shareable_states where state_name = 'offering'));
