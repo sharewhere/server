@@ -51,8 +51,31 @@ module.exports={
 		conn.end();
 	},
 	
-	addShareable: function(conn, shareable, fn)
+	addShareable: function(dbInfo, shareable, user, fn)
 	{
+		if(!shareable.shar_name){
+			throw new Error("No shar_name set in addShareable");
+		}
+		if(!shareable.shareableState){
+			throw new Error("No shareableState set in addShareable");
+		}
+		if(!user.username){
+			throw new Error("No username set in addShareable");
+		}
+		if(!shareable.description){
+			shareable.description = '';
+		}
+		queryString = "insert into shareables(shar_name, description, username, state_id) VALUES ('";
+		queryString = queryString + shareable.shar_name +"', '"+shareable.description+"','"+user.username
+			+"',(select state_id from shareable_states where state_name = '"+shareable.shareableState+"'));";
 		
+		
+		conn = mysql.createConnection(dbInfo);
+		conn.query(queryString, function(err, rows, fields){
+			fn(err, rows, fields);
+		});
+		conn.end();
 	}
+	
+	
 }

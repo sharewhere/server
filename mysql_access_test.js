@@ -9,9 +9,9 @@ var dbInfo = {
 var connection = mysql.createConnection(dbInfo);
 
 var connectionTesting = false;
-var addUserTesting = true;
+var addUserTesting = false;
 var removeUserTesting = false;
-
+var addShareableTesting = true;
 
 connection.connect();
 
@@ -22,9 +22,7 @@ if(connectionTesting){
 	 var numRows = rows.length;
 
 	 console.log(rows);
-	 console.log(Object.keys(rows[0]));
-
-	  
+	 console.log(Object.keys(rows[0]));	  
 	});
 }
 
@@ -54,4 +52,20 @@ if(removeUserTesting){
 	});
 }
 
+if(addShareableTesting){
+	shareable = {
+		shar_name: "broom",
+		shareableState: "requesting",
+		description: "Oi, I need a broom to sweep me kitchen."
+	};
+	uploadingUser = {
+		username: "tj"
+	};
+	sql_queries.addShareable(dbInfo, shareable, uploadingUser,  function(err, rows, fields){
+		if(err){
+			console.log("error in test removeUser: "+err);
+		}
+		console.log(rows);
+	});
+}
 connection.end();
