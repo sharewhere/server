@@ -69,9 +69,19 @@ create table shareables (
     foreign key (state_id) references shareable_states(state_id)
 );
 
-#create table transactions (
-#	state_name
-#);
+#request/offer, reserved, lent/borrowed, completed
+create table transaction_types (
+    type_id        int auto_increment,
+    type_name      varchar(30) not null,
+    primary key (type_id)
+);
+
+create table transactions (
+	lender         varchar(30) not null,
+	borrower       varchar(30) not null,
+	shar_id        int not null,
+    type_id        int not null
+);
 
 create table sessions (
      session_id     varchar(48) not null,
@@ -112,3 +122,11 @@ INSERT INTO shareables
 VALUES 
 ('Shovel', 'I need a shovel in order to install sprinkers in my lawn', 'tj', (select state_id from shareable_states where state_name = 'requesting')),
 ('N64 controller', 'Anybody need this? I know it\'s rare!', 'tj', (select state_id from shareable_states where state_name = 'offering'));
+
+INSERT INTO transaction_types 
+(type_name)
+VALUES
+("request/offer"),
+("reserved"),
+("lent/borrowed"),
+("completed");
