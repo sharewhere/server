@@ -11,9 +11,10 @@ var connection = mysql.createConnection(dbInfo);
 var connectionTesting = false;
 var addUserTesting = false;
 var removeUserTesting = false;
-var getUserTesting = true;
+var getUserTesting = false;
 var getUsersShareablesTesting = false;
 var addShareableTesting = false;
+var removeSharableTesting = true;
 
 connection.connect();
 
@@ -86,6 +87,18 @@ if(addShareableTesting){
 		}
 		console.log(rows);
 	});
+}
+
+if(removeSharableTesting){
+	//Removing the first object in the DB
+	sql_queries.removeSharable(dbInfo, 1, function(err, user){
+		if(err){
+			console.log("Error in test removeSharableTesting " + err);
+		}
+		console.log("Successfully removed " + shareable.shar_name);
+	});
+	
+
 }
 
 

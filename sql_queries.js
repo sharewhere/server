@@ -18,6 +18,18 @@ getEntityByPrimaryKey = function(dbInfo, entityTable, primaryKey, primaryValue, 
 	});
 	conn.end();
 }
+//removeEntityByPrimaryKey(dbInfo, "shareables", "shar_id", shar_id, function(err, user)
+removeEntityByPrimaryKey = function(dbInfo, entityTable, primaryKey, primaryValue, fn){
+	if(!primaryValue){
+		throw new Error("No primaryValue set in removeEntityByPrimaryKey.");
+	}
+	var queryString = "delete from "+entityTable+" where "+primaryKey+" ="+primaryValue+";";
+	conn = mysql.createConnection(dbInfo);
+	conn.query(queryString, function(err){
+		if (err) throw err;
+	});
+	conn.end();
+}
 
 
 module.exports={
@@ -124,6 +136,12 @@ module.exports={
 			throw new Error("No shar_id set in getShareable");
 		}
 		
+	},
+
+	removeSharable :function(dbInfo, shar_id, fn){
+		removeEntityByPrimaryKey(dbInfo, "shareables", "shar_id", shar_id, function(err, user){
+			fn(err, user);
+		});
 	},
 	
 	offerOnRequest: function(dbInfo, shareable, user, fn){
