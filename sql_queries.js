@@ -151,7 +151,7 @@ module.exports={
 		conn.end();
 	},
 
-	removeSharable :function(dbInfo, shar_id, fn){
+	removeshareable :function(dbInfo, shar_id, fn){
 		removeEntityByPrimaryKey(dbInfo, "shareables", "shar_id", shar_id, function(err, user){
 			fn(err, user);
 		});
@@ -171,10 +171,10 @@ module.exports={
 			if(err){
 				throw err;
 			}
-			var allowableStates = ["requesting", "requested_received_offer"]
+			var allowableStates = ["requesting", "requested_received_offer"];
 			if(!(allowableStates.indexOf(shareable.state_name) > -1)){
 				//Shareable is not in proper state for offering.
-				fn(new Error("Shareable can't be offered in this state"));
+				throw new Error("Shareable can't be offered in this state");
 			}
 			queryString = "UPDATE shareables SET state_id = "+
 			"(select state_id from shareable_states where state_name = 'requested_received_offer') where shar_id = '"
@@ -186,5 +186,53 @@ module.exports={
 			});
 			conn.end();
 		});
+	},
+
+	requestOnOffer: function(dbInfo, shar_id, username){
+		if(!shar_id){
+			throw new Error("Shareable doesn't have shar_id set in requestOnOffer");
+		}
+		module.exports.getShareable(dbInfo, shar_id, function(err, shareable){
+			if(err){
+				throw err;
+			}
+			var allowableStates = ["offering", "offered_received_request"];
+			if(!(allowableStates.indexOf(shareable.state_name) > -1)){
+				throw new Error("shareable can't be offered in this state.");
+			}
+			queryString = "UPDATE shareables SET state_id = "+
+			"(select state_id from shareable_states where state_name = 'offered_received_request') where shar_id = '"
+			+shar_id+"';";
+
+			conn = mysql.createConnection(dbInfo);
+			conn.query(queryString, function(err, rows, fields){
+				if (err) throw err;
+			});
+			conn.end();
+		});
+	},
+
+	makeShareableHidden: function(dbInfo, shar_id, username){
+		if(!shar_id){
+			throw new Error("Shareable doesn't have shar_id set in makeShareableHidden");
+		}
+		module.exports.getShareable(dbInfo, shar_id, function(err, shareable){
+			if(err) throw err;
+			var allowableStates = ["reserved", "requesting", "offering", "requested_received_offer", "offered_received_request", "returned"];
+			if(!(allowableStates.indexOf(shareable.state_name) > -1)){
+				throw new Error("shareable can't be offered in this state.");
+			}
+			queryString = "UPDATE shareables SET state_id = "+
+			"(select state_id from shareable_states where state_name = 'hidden') where shar_id = '"
+			+shar_id+"';";
+
+			conn = mysql.createConnection(dbInfo);
+			conn.query(queryString, function(err, rows, fields){
+				if (err) throw err;
+			});
+			conn.end();
+		});
 	}
+
+
 };

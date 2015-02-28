@@ -17,6 +17,8 @@ var addShareableTesting = false;
 var getShareableTesting = false;
 var offerOnRequestTesting = false;
 var removeSharableTesting = false;
+var requestOnOfferTesting = false;
+var makeShareableHiddenTest = true;
 
 connection.connect();
 
@@ -118,6 +120,24 @@ if(offerOnRequestTesting){
 		});
 }
 
+if(requestOnOfferTesting){
+	var shar_id = 2;
+	sql_queries.getShareable(dbInfo, 2, function(err, shareable){
+		if(err){
+				console.log("error in test requestOnOfferTesting: "+err);
+			}
+		console.log("Shareable with shar_id = 2 before \"requestOnOffer\"\n %j", shareable)
+			
+		});
+	sql_queries.requestOnOffer(dbInfo, shar_id);
+	sql_queries.getShareable(dbInfo, 2, function(err, shareable){
+		if(err){
+				console.log("error in test requestOnOfferTesting: "+err);
+			}
+		console.log("\nShareable with shar_id = 2 after \"requestOnOffer\"\n %j", shareable)
+		});
+}
+
 if(removeSharableTesting){
 	//Removing the first object in the DB
 	sql_queries.removeSharable(dbInfo, 1, function(err, user){
@@ -126,8 +146,26 @@ if(removeSharableTesting){
 		}
 		console.log("Successfully removed " + shareable.shar_name);
 	});
-	
 
+}
+
+if(makeShareableHiddenTest){
+	var shar_id = 1;
+	sql_queries.getShareable(dbInfo, 1, function(err, shareable){
+		if(err){
+			console.log("Error in test makeShareableHiddenTest " + err);
+		}
+		console.log("Shareable with shar_id = 1 before \"makeShareableHidden\"\n %j", shareable)
+	});
+	sql_queries.makeShareableHidden(dbInfo, shar_id);
+	sql_queries.getShareable(dbInfo, 1, function(err, shareable){
+		if(err){
+			console.log("Error in test makeShareableHiddenTest " + err);
+		}
+		console.log("Shareable with shar_id = 1 after \"makeShareableHidden\"\n %j", shareable)
+	});
+
+	
 }
 
 connection.end();
