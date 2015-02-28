@@ -15,7 +15,8 @@ var getUserTesting = false;
 var getUsersShareablesTesting = false;
 var addShareableTesting = false;
 var getShareableTesting = false;
-var offerOnRequestTesting = true;
+var offerOnRequestTesting = false;
+var removeSharableTesting = false;
 
 connection.connect();
 
@@ -115,6 +116,18 @@ if(offerOnRequestTesting){
 			}
 			console.log("\nShareable with shar_id = 1 after \"offerOnRequest\"\n %j", shareable)
 		});
+}
+
+if(removeSharableTesting){
+	//Removing the first object in the DB
+	sql_queries.removeSharable(dbInfo, 1, function(err, user){
+		if(err){
+			console.log("Error in test removeSharableTesting " + err);
+		}
+		console.log("Successfully removed " + shareable.shar_name);
+	});
+	
+
 }
 
 connection.end();
