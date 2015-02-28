@@ -1,6 +1,25 @@
 var hash = require('./pass').hash;
 var mysql      = require('mysql');
 
+getEntityByPrimaryKey = function(dbInfo, entityTable, primaryKey, primaryValue, fn){
+	if(!primaryValue){
+		throw new Error("No primaryValue set in getEntityByPrimaryKey");
+	}
+	var queryString = "select * from "+entityTable+" where "+primaryKey+" ='"+primaryValue+"';";
+	
+	conn = mysql.createConnection(dbInfo);
+	conn.query(queryString, function(err, rows, fields){
+		if (err) throw err;
+		if(rows.length <1){
+			fn(new Error('cannot find entity in: '+entityTable));
+		}
+		var entity = rows[0];
+		fn(err, entity);
+	});
+	conn.end();
+}
+
+
 module.exports={
 	//User must have username, password, and email_address defined for addition to database.
 	addUser: function(dbInfo, user, fn)
@@ -41,7 +60,9 @@ module.exports={
 	},
 	
 	removeUser: function(dbInfo, username, fn){
-		if(!username) throw new Error("no username set in removeUser");
+		if(!username){
+			throw new Error("no username set in removeUser");
+		}
 		queryString = "delete from users where username = '"+username+"';";
 		
 		conn = mysql.createConnection(dbInfo);
@@ -52,27 +73,17 @@ module.exports={
 	},
 	
 	getUser: function(dbInfo, username, fn){
-		if(!username){
-			throw new Error("No username set in getUser");
-		}
-		var queryString = "select * from users where username ='"+username+"';";
-		
-		conn = mysql.createConnection(dbInfo);
-		conn.query(queryString, function(err, rows, fields){
-			if (err) throw err;
-			if(rows.length <1){
-				fn(new Error('cannot find user'));
-			}
-			var user = rows[0];
+		getEntityByPrimaryKey(dbInfo,"users", "username", username, function(err, user){
 			fn(err, user);
 		});
-		conn.end();
 	},
 	
 	//This function could be reasonably reimplemented to
 	//have a callback function: function(err, shareables) 
 	getUsersShareables: function(dbInfo, username, fn){
-		if(!username) throw new Error("no username set in getUserShareables");
+		if(!username){
+			throw new Error("no username set in getUserShareables");
+		}
 		queryString = "select * from shareables where username = '"+username+"';";
 		
 		conn = mysql.createConnection(dbInfo);
@@ -84,8 +95,7 @@ module.exports={
 	
 	//User must have username defined.
 	//The shareable that is being added is added for that user.
-	addShareable: function(dbInfo, shareable, user, fn)
-	{
+	addShareable: function(dbInfo, shareable, user, fn){
 		if(!shareable.shar_name){
 			throw new Error("No shar_name set in addShareable");
 		}
@@ -107,6 +117,13 @@ module.exports={
 			fn(err, rows, fields);
 		});
 		conn.end();
+	},
+	
+	getShareable: function(dbInfo, shar_id, fn){
+		if(!shar_id){
+			throw new Error("No shar_id set in getShareable");
+		}
+		
 	},
 	
 	offerOnRequest: function(dbInfo, shareable, user, fn){
