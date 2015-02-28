@@ -119,19 +119,54 @@ module.exports={
 		conn.end();
 	},
 	
+	//Can't use getEntityByPrimaryKey because it needs to join on shareable_state
 	getShareable: function(dbInfo, shar_id, fn){
 		if(!shar_id){
 			throw new Error("No shar_id set in getShareable");
 		}
+		var queryString = "select * from shareables inner join shareable_states on "
+		+ "shareables.state_id = shareable_states.state_id where shar_id ='"+shar_id+"';";
 		
+		conn = mysql.createConnection(dbInfo);
+		conn.query(queryString, function(err, rows, fields){
+			if (err) throw err;
+			if(rows.length <1){
+				fn(new Error("cannot find shareable"));
+			}
+			var shareable = rows[0];
+			fn(err, shareable);
+		});
+		conn.end();
 	},
 	
-	offerOnRequest: function(dbInfo, shareable, user, fn){
+	offerOnRequest: function(dbInfo, shar_id, username){
 		//The shareable has to be in requesting or requested_received_offer
 		//The user must be authenticated and have username defined
 		//Shareable is distinguished by its shar_id field
-		if(shareable.shar_id){
+		//The offer must be logged in the database so there is an association
+		//Between the user requesting, the user offering, and the shareable
+		//This is a transaction of type offer
+		if(!shar_id){
 			throw new Error("Shareable doesn't have shar_id set in offerOnRequest");
 		}
+		module.exports.getShareable(dbInfo, shar_id, function(err, shareable){
+			if(err){
+				throw err;
+			}
+			var allowableStates = ["requesting", "requested_received_offer"]
+			if(!(allowableStates.indexOf(shareable.state_name) > -1)){
+				//Shareable is not in proper state for offering.
+				fn(new Error("Shareable can't be offered in this state"));
+			}
+			queryString = "UPDATE shareables SET state_id = "+
+			"(select state_id from shareable_states where state_name = 'requested_received_offer') where shar_id = '"
+			+shar_id+"';";
+			
+			conn = mysql.createConnection(dbInfo);
+			conn.query(queryString, function(err, rows, fields){
+				if (err) throw err;
+			});
+			conn.end();
+		});
 	}
 };

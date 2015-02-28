@@ -11,9 +11,11 @@ var connection = mysql.createConnection(dbInfo);
 var connectionTesting = false;
 var addUserTesting = false;
 var removeUserTesting = false;
-var getUserTesting = true;
+var getUserTesting = false;
 var getUsersShareablesTesting = false;
 var addShareableTesting = false;
+var getShareableTesting = false;
+var offerOnRequestTesting = true;
 
 connection.connect();
 
@@ -88,5 +90,31 @@ if(addShareableTesting){
 	});
 }
 
+if(getShareableTesting){
+	console.log("Attempting to get the with shar_id 1");
+	sql_queries.getShareable(dbInfo, 1, function(err, shareable){
+		if(err){
+			console.log("error in test removeUser: "+err);
+		}
+		console.log("Retrieved shareable: %j", shareable)
+	});
+}
+
+if(offerOnRequestTesting){
+	var shar_id = 1;
+	sql_queries.getShareable(dbInfo, 1, function(err, shareable){
+		if(err){
+				console.log("error in test offerOnRequestTesting: "+err);
+			}
+			console.log("Shareable with shar_id = 1 before \"offerOnRequest\"\n %j", shareable)
+		});
+	sql_queries.offerOnRequest(dbInfo, shar_id);
+	sql_queries.getShareable(dbInfo, 1, function(err, shareable){
+		if(err){
+				console.log("error in test offerOnRequestTesting: "+err);
+			}
+			console.log("\nShareable with shar_id = 1 after \"offerOnRequest\"\n %j", shareable)
+		});
+}
 
 connection.end();
