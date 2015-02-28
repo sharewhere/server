@@ -31,12 +31,14 @@ app.use(function(req, res, next){
 });                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
 
 //sql connection info
-var connection = mysql.createConnection({
+var dbInfo = {
   host     : 'localhost',
   user     : 'ShareWhereUser',
   password : 'N3onIc3d',
   database : 'sharewheretest'
-});
+}
+
+var connection = mysql.createConnection(dbInfo);
 
 //connect to the database
 connection.connect();
@@ -163,11 +165,31 @@ app.post('/login', function(req, res){
 });
 
 app.get('/register', function(req, res){
-	
+
 });
 
 app.post('/register', function(req, res){
-	
+  var user = {
+    username : req.body.username,
+    password : req.body.password,
+    email_address : req.body.email_address
+  };
+  console.log("Attempting to add user: " + user.username)
+  sqlQueries.addUser(dbInfo, user, function(err, rows, fields){
+    if(err){
+      throw new Error("Error trying to add user. " + err)
+    }
+    req.session.regenerate(function(){
+      req.session.user = user
+      req.session.success = 'Authenticated as ' + user.username                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+          + ' click to <a href="/logout">logout</a>. '                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+          + ' You may now access <a href="/restricted">/restricted</a>.';
+      console.log("Success in adding user " + user.username)
+      res.json({success: 'true'})
+    });
+
+  });
+
 });                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
 
 app.get('/requests', function(req,res) {
