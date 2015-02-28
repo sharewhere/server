@@ -51,6 +51,39 @@ module.exports={
 		conn.end();
 	},
 	
+	getUser: function(dbInfo, username, fn){
+		if(!username){
+			throw new Error("No username set in getUser");
+		}
+		var queryString = "select * from users where username ='"+username+"';";
+		
+		conn = mysql.createConnection(dbInfo);
+		conn.query(queryString, function(err, rows, fields){
+			if (err) throw err;
+			if(rows.length <1){
+				fn(new Error('cannot find user'));
+			}
+			var user = rows[0];
+			fn(err, user);
+		});
+		conn.end();
+	},
+	
+	//This function could be reasonably reimplemented to
+	//have a callback function: function(err, shareables) 
+	getUsersShareables: function(dbInfo, username, fn){
+		if(!username) throw new Error("no username set in getUserShareables");
+		queryString = "select * from shareables where username = '"+username+"';";
+		
+		conn = mysql.createConnection(dbInfo);
+		conn.query(queryString, function(err, rows, fields){
+			fn(err, rows, fields);
+		});
+		conn.end();
+	},
+	
+	//User must have username defined.
+	//The shareable that is being added is added for that user.
 	addShareable: function(dbInfo, shareable, user, fn)
 	{
 		if(!shareable.shar_name){
@@ -69,13 +102,19 @@ module.exports={
 		queryString = queryString + shareable.shar_name +"', '"+shareable.description+"','"+user.username
 			+"',(select state_id from shareable_states where state_name = '"+shareable.shareableState+"'));";
 		
-		
 		conn = mysql.createConnection(dbInfo);
 		conn.query(queryString, function(err, rows, fields){
 			fn(err, rows, fields);
 		});
 		conn.end();
+	},
+	
+	offerOnRequest: function(dbInfo, shareable, user, fn){
+		//The shareable has to be in requesting or requested_received_offer
+		//The user must be authenticated and have username defined
+		//Shareable is distinguished by its shar_id field
+		if(shareable.shar_id){
+			throw new Error("Shareable doesn't have shar_id set in offerOnRequest");
+		}
 	}
-	
-	
-}
+};

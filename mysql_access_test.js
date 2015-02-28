@@ -11,7 +11,9 @@ var connection = mysql.createConnection(dbInfo);
 var connectionTesting = false;
 var addUserTesting = false;
 var removeUserTesting = false;
-var addShareableTesting = true;
+var getUserTesting = true;
+var getUsersShareablesTesting = false;
+var addShareableTesting = false;
 
 connection.connect();
 
@@ -52,6 +54,23 @@ if(removeUserTesting){
 	});
 }
 
+if(getUserTesting){
+	console.log("Attempting to get the user 'tj'");
+	sql_queries.getUser(dbInfo, "tj", function(err, user){
+		console.log("Retrieved user %j", user);
+	});
+}
+
+if(getUsersShareablesTesting){
+	var username = "tj";
+	sql_queries.getUsersShareables(dbInfo, username, function(err, rows, fields){
+		if(err){
+			console.log("error in test removeUser: "+err);
+		}
+		console.log(rows);
+	});
+}
+
 if(addShareableTesting){
 	shareable = {
 		shar_name: "broom",
@@ -68,4 +87,6 @@ if(addShareableTesting){
 		console.log(rows);
 	});
 }
+
+
 connection.end();
