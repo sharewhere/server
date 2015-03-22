@@ -8,7 +8,7 @@ var sqlQueries = require('./sql_queries');
 
 var app = express();
 
-var portNumber = 8000;
+var portNumber = 80;
 
 // middleware
 
@@ -177,7 +177,9 @@ app.post('/register', function(req, res){
   console.log("Attempting to add user: " + user.username)
   sqlQueries.addUser(dbInfo, user, function(err, rows, fields){
     if(err){
-      throw new Error("Error trying to add user. " + err)
+      console.log("Error trying to add user. " + err)
+	  res.json({success: 'false', errorMessage: 'User already exists'});
+	  return;
     }
     req.session.regenerate(function(){
       req.session.user = user
