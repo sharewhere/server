@@ -172,7 +172,7 @@ module.exports={
 		conn.end();
 	},
 
-	removeshareable :function(dbInfo, shar_id, fn){
+	removeShareable :function(dbInfo, shar_id, fn){
 		removeEntityByPrimaryKey(dbInfo, "shareables", "shar_id", shar_id, function(err, user){
 			fn(err, user);
 		});
@@ -253,7 +253,19 @@ module.exports={
 			});
 			conn.end();
 		});
+	},
+
+	getAllOfferedShareables: function(dbInfo, fn){
+		queryString = "SELECT * from shareables inner join shareable_states on shareables.state_id = shareable_states.state_id where state_name = 'offering' or state_name = 'offered_received_request'";
+		conn = mysql.createConnection(dbInfo);
+		conn.query(queryString, function(err, rows, fields){
+			if(err) throw err;
+			fn(err, rows);
+		});
+		conn.end();
 	}
+
+
 
 
 };

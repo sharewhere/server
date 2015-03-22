@@ -193,10 +193,24 @@ app.post('/register', function(req, res){
 
 });
 
+app.get('/browseOffers', function(req, res){
+  console.log("Attempting to get all Shareables");
+  sqlQueries.getAllOfferedShareables(dbInfo, function(err, offeredShareables){
+    if(err){
+      throw new Error("Error trying to get all Offered Shareables. " + err);
+    }
+    res.json({shareables: offeredShareables})
+  });
+});
+
 app.get('/requests', function(req,res) {
 
 });
 
+app.get('/offers', function(req, res) {
 
-app.listen(80);
-console.log('Express started on port ' + 8000);
+});
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+app.listen(80);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+console.log('Express started on port ' + 8000); 

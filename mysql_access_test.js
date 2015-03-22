@@ -19,7 +19,11 @@ var offerOnRequestTesting = false;
 var removeSharableTesting = false;
 var requestOnOfferTesting = false;
 var makeShareableHiddenTest = false;
+<<<<<<< HEAD
 var getUsersRequestsTesting = false;
+=======
+var getAllOfferedShareablesTest = false;
+>>>>>>> Added function to get all offered shareables
 
 connection.connect();
 
@@ -166,6 +170,16 @@ if(makeShareableHiddenTest){
 		console.log("Shareable with shar_id = 1 after \"makeShareableHidden\"\n %j", shareable)
 	});
 }
+if(getAllOfferedShareablesTest){
+	sql_queries.getAllOfferedShareables(dbInfo, function(err, offeredShareables){
+		if(err){
+			console.log("Error in getOfferedShareablesTest. " + err);
+		}
+	console.log("offeredShareables : %j", offeredShareables);
+	});
+}
+
+
 
 if(getUsersRequestsTesting){
 	//Removing the first object in the DB
