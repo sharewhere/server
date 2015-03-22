@@ -105,6 +105,27 @@ module.exports={
 		conn.end();
 	},
 	
+	getUsersRequests: function(dbInfo, username, fn){
+		if(!username){
+			throw new Error("no username set in getUserShareables");
+		}
+		
+		var queryString = "select distinct \
+								shareables.shar_id, username, shar_name, description, state_name, creation_date, lender, borrower \
+								from shareables \
+								left outer join transactions \
+								on transactions.borrower='"+username+"' \
+								and shareables.shar_id = transactions.shar_id \
+								inner join shareable_states \
+								on shareables.state_id = shareable_states.state_id \
+								where shareables.state_id in (select state_id from shareable_states where state_name = 'requesting' or state_name='offered_received_request');";
+		conn = mysql.createConnection(dbInfo);
+		conn.query(queryString, function(err, rows, fields){
+			fn(err, rows);
+		});
+		conn.end();
+	},
+	
 	//User must have username defined.
 	//The shareable that is being added is added for that user.
 	addShareable: function(dbInfo, shareable, user, fn){

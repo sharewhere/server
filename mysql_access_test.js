@@ -18,7 +18,8 @@ var getShareableTesting = false;
 var offerOnRequestTesting = false;
 var removeSharableTesting = false;
 var requestOnOfferTesting = false;
-var makeShareableHiddenTest = true;
+var makeShareableHiddenTest = false;
+var getUsersRequestsTesting = false;
 
 connection.connect();
 
@@ -164,8 +165,16 @@ if(makeShareableHiddenTest){
 		}
 		console.log("Shareable with shar_id = 1 after \"makeShareableHidden\"\n %j", shareable)
 	});
-
-	
 }
 
+if(getUsersRequestsTesting){
+	//Removing the first object in the DB
+	sql_queries.getUsersRequests(dbInfo, 'tj', function(err, requests){
+		if(err){
+			console.log("Error in test getUsersRequestsTesting " + err);
+		}
+		console.log("%j", requests);
+	});
+
+}
 connection.end();
