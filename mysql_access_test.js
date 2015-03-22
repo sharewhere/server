@@ -183,7 +183,7 @@ if(getUsersRequestsTesting){
 		if(err){
 			console.log("Error in test getUsersRequestsTesting " + err);
 		}
-		console.log("%j", requests);
+		console.log("All of the user TJ's requests: %j", requests);
 	});
 
 }
