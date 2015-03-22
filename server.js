@@ -8,6 +8,8 @@ var sqlQueries = require('./sql_queries');
 
 var app = express();
 
+var portNumber = 8000;
+
 // middleware
 
 //app.use(express.bodyParser());
@@ -220,7 +222,13 @@ app.get('/requests', function(req,res) {
 app.get('/offers', function(req, res) {
 
 });
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
-app.listen(8000);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
-console.log('Express started on port ' + 8000); 
+var logo =
+"  ___ _               __      ___                \n" +
+" / __| |_  __ _ _ _ __\\ \\    / / |_  ___ _ _ ___ \n" +
+" \\__ \\ ' \\/ _` | '_/ -_) \\/\\/ /| ' \\/ -_) '_/ -_)\n" +
+" |___/_||_\\__,_|_| \\___|\\_/\\_/ |_||_\\___|_| \\___|";
+
+console.log(logo);
+
+app.listen(portNumber);
+console.log('ShareWhere server started on port ' + portNumber);
