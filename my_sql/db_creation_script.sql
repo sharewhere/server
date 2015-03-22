@@ -63,6 +63,7 @@ create table shareables (
     shar_name      varchar(30) not null,
     description    varchar(500),
     username       varchar(30) not null,
+    creation_date datetime not null,
     state_id       int,
     primary key (shar_id),
     foreign key (username) references users(username),
@@ -103,7 +104,8 @@ VALUES
 INSERT INTO users 
 (username, salt, hash_code, activation_date, last_login, rank_id, zip_code, email_address)
 VALUES 
-( 'tj', '12345678901234567890', 'fdfd75ed7db53c8c4f44d715bc64e8e8cff070ef', CURDATE(), CURDATE(), (SELECT rank_id FROM ranks WHERE rank_title = "Newbie"), '32816', 'c@c.c');
+( 'tj', '12345678901234567890', 'fdfd75ed7db53c8c4f44d715bc64e8e8cff070ef', CURDATE(), CURDATE(), (SELECT rank_id FROM ranks WHERE rank_title = "Newbie"), '32816', 'c@c.c'),
+( 'jeff', '12345678901234567890', 'fdfd75ed7db53c8c4f44d715bc64e8e8cff070ef', CURDATE(), CURDATE(), (SELECT rank_id FROM ranks WHERE rank_title = "Newbie"), '32816', 'd@d.d');
 
 INSERT INTO shareable_states 
 (state_name)
@@ -118,10 +120,14 @@ VALUES
 ("returned");
 
 INSERT INTO shareables 
-(shar_name, description, username, state_id)
+(shar_name, description, username, state_id, creation_date)
 VALUES 
-('Shovel', 'I need a shovel in order to install sprinkers in my lawn', 'tj', (select state_id from shareable_states where state_name = 'requesting')),
-('N64 controller', 'Anybody need this? I know it\'s rare!', 'tj', (select state_id from shareable_states where state_name = 'offering'));
+('Shovel', 'I need a shovel in order to install sprinkers in my lawn', 'tj', (select state_id from shareable_states where state_name = 'requesting'), NOW()),
+('N64 controller', 'Anybody need this? I know it\'s rare!', 'tj', (select state_id from shareable_states where state_name = 'offering'), NOW()),
+('Wig', 'Have no hair.', 'tj', (select state_id from shareable_states where state_name = 'requesting'), NOW()),
+('Map', 'Need to find my path.', 'tj', (select state_id from shareable_states where state_name = 'requesting'), NOW()),
+('Toy', 'I wanna have fun.', 'tj', (select state_id from shareable_states where state_name = 'requesting'), NOW()),
+('Plane', 'Planes are the best.', 'jeff', (select state_id from shareable_states where state_name = 'offered_received_request'), NOW());
 
 INSERT INTO transaction_types 
 (type_name)
@@ -130,3 +136,8 @@ VALUES
 ("reserved"),
 ("lent/borrowed"),
 ("completed");
+
+INSERT INTO transactions
+(lender, borrower, shar_id, type_id)
+values
+('jeff', 'tj', (select shar_id from shareables where username = 'jeff' and shar_name = 'Plane'), (select type_id from transaction_types where type_name = 'request/offer'));
