@@ -22,6 +22,7 @@ var makeShareableHiddenTest = false;
 var getUsersRequestsTesting = false;
 var getAllOfferedShareablesTest = false;
 var getAllRequestedShareablesTest = false;
+var getUsersOffersTest = true;
 
 connection.connect();
 
@@ -184,6 +185,17 @@ if(getUsersRequestsTesting){
 			console.log("Error in test getUsersRequestsTesting " + err);
 		}
 		console.log("All of the user TJ's requests: %j", requests);
+	});
+
+}
+
+if(getUsersOffersTest){
+	//Removing the first object in the DB
+	sql_queries.getUsersOffers(dbInfo, 'tj', function(err, offers){
+		if(err){
+			console.log("Error in test getUsersOffersTest " + err);
+		}
+		console.log("%j", offers);
 	});
 
 }

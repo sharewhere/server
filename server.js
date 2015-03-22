@@ -220,7 +220,12 @@ app.get('/requests', function(req,res) {
 });
 
 app.get('/offers', function(req, res) {
-
+  console.log(req.query.username+"\n");
+  console.log("Attempting to get all offered/requested_received_offer the user is involved with");
+  sqlQueries.getUsersOffers(dbInfo, req.query.username, function(err, usersOffers){
+    if(err) throw err;
+    res.json({userOffers : usersOffers});
+  });
 });
 var logo =
 "  ___ _               __      ___                \n" +
