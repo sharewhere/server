@@ -4,7 +4,7 @@ var dbInfo = {
   host     : 'localhost',
   user     : 'ShareWhereUser',
   password : 'N3onIc3d',
-  database : 'sharewheretest'
+  database : 'ShareWhereTest'
 };
 var connection = mysql.createConnection(dbInfo);
 

@@ -58,7 +58,7 @@ module.exports={
 			}
 			queryString = queryString +") VALUES ('"+user.username +"', '" +user.salt +"', '" +user.hash_code +"', CURDATE(), CURDATE(), (SELECT rank_id FROM ranks WHERE rank_title = 'Newbie'), '"+user.email_address;
 			if(user.zip_code){
-				queryString = queryString +", "+user.zip_code;
+				queryString = queryString +"', '"+user.zip_code;
 			}
 			queryString = queryString +"');";
 			console.log("addUser queryString: "+queryString);

@@ -35,7 +35,7 @@ var dbInfo = {
   host     : 'localhost',
   user     : 'ShareWhereUser',
   password : 'N3onIc3d',
-  database : 'sharewheretest'
+  database : 'ShareWhereTest'
 }
 
 var connection = mysql.createConnection(dbInfo);
@@ -172,7 +172,8 @@ app.post('/register', function(req, res){
   var user = {
     username : req.body.username,
     password : req.body.password,
-    email_address : req.body.email_address
+    email_address : req.body.email_address,
+	zip_code : req.body.zip_code
   };
   console.log("Attempting to add user: " + user.username)
   sqlQueries.addUser(dbInfo, user, function(err, rows, fields){
@@ -197,5 +198,5 @@ app.get('/requests', function(req,res) {
 });
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
-app.listen(8000);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+app.listen(80);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
 console.log('Express started on port ' + 8000); 
