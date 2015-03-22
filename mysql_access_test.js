@@ -19,10 +19,10 @@ var offerOnRequestTesting = false;
 var removeSharableTesting = false;
 var requestOnOfferTesting = false;
 var makeShareableHiddenTest = false;
-var getUsersRequestsTesting = false;
+var getUsersRequestsTesting = true;
 var getAllOfferedShareablesTest = false;
 var getAllRequestedShareablesTest = false;
-var getUsersOffersTest = true;
+var getUsersOffersTest = false;
 
 connection.connect();
 
@@ -191,7 +191,7 @@ if(getUsersRequestsTesting){
 
 if(getUsersOffersTest){
 	//Removing the first object in the DB
-	sql_queries.getUsersOffers(dbInfo, 'tj', function(err, offers){
+	sql_queries.getUsersOffers(dbInfo, 'jeff', function(err, offers){
 		if(err){
 			console.log("Error in test getUsersOffersTest " + err);
 		}

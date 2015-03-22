@@ -153,9 +153,6 @@ app.post('/login', function(req, res){
           + ' You may now access <a href="/restricted">/restricted</a>.';
         res.json({success : 'true' })
 
-
-
-
       });
     } else {
       req.session.error = 'Authentication failed, please check your '
@@ -216,12 +213,15 @@ app.get('/browseRequests', function(req, res){
 });
 
 app.get('/requests', function(req,res) {
-
+  console.log("Attempting to get all offer type shareables the user is involved with");
+  sqlQueries.getUsersRequests(dbInfo, req.query.username, function(err, usersRequests){
+    if(err) throw err;
+    res.json({userRequests : usersRequests});
+  });
 });
 
 app.get('/offers', function(req, res) {
-  console.log(req.query.username+"\n");
-  console.log("Attempting to get all offered/requested_received_offer the user is involved with");
+  console.log("Attempting to get all offer type shareables the user is involved with");
   sqlQueries.getUsersOffers(dbInfo, req.query.username, function(err, usersOffers){
     if(err) throw err;
     res.json({userOffers : usersOffers});
