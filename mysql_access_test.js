@@ -21,7 +21,7 @@ var requestOnOfferTesting = false;
 var makeShareableHiddenTest = false;
 var getUsersRequestsTesting = false;
 var getAllOfferedShareablesTest = false;
-var getAllRequestedShareablesTest = falses;
+var getAllRequestedShareablesTest = false;
 
 connection.connect();
 
