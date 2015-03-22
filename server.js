@@ -194,12 +194,22 @@ app.post('/register', function(req, res){
 });
 
 app.get('/browseOffers', function(req, res){
-  console.log("Attempting to get all Shareables");
+  console.log("Attempting to get all offered Shareables");
   sqlQueries.getAllOfferedShareables(dbInfo, function(err, offeredShareables){
     if(err){
       throw new Error("Error trying to get all Offered Shareables. " + err);
     }
     res.json({shareables: offeredShareables})
+  });
+});
+
+app.get('/browseRequests', function(req, res){
+  console.log("Attempting to get all reqested Shareables");
+  sqlQueries.getAllRequestedShareables(dbInfo, function(err, requestedShareables){
+    if(err){
+      throw new Error("Error trying to get all Requested Shareables. " + err);
+    }
+    res.json({shareables : requestedShareables})
   });
 });
 
@@ -212,5 +222,5 @@ app.get('/offers', function(req, res) {
 });
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
-app.listen(80);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+app.listen(8000);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
 console.log('Express started on port ' + 8000); 

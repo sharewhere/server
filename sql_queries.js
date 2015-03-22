@@ -263,9 +263,16 @@ module.exports={
 			fn(err, rows);
 		});
 		conn.end();
+	},
+
+	getAllRequestedShareables: function(dbInfo, fn){
+		queryString = "SELECT * from shareables inner join shareable_states on shareables.state_id = shareable_states.state_id where state_name = 'requesting' or state_name = 'requested_received_offer'";
+		conn = mysql.createConnection(dbInfo);
+		conn.query(queryString, function(err, rows, field){
+			if(err) throw err;
+			fn(err, rows);
+		});
+		conn.end();
 	}
-
-
-
 
 };

@@ -19,11 +19,9 @@ var offerOnRequestTesting = false;
 var removeSharableTesting = false;
 var requestOnOfferTesting = false;
 var makeShareableHiddenTest = false;
-<<<<<<< HEAD
 var getUsersRequestsTesting = false;
-=======
 var getAllOfferedShareablesTest = false;
->>>>>>> Added function to get all offered shareables
+var getAllRequestedShareablesTest = falses;
 
 connection.connect();
 
@@ -179,8 +177,6 @@ if(getAllOfferedShareablesTest){
 	});
 }
 
-
-
 if(getUsersRequestsTesting){
 	//Removing the first object in the DB
 	sql_queries.getUsersRequests(dbInfo, 'tj', function(err, requests){
@@ -188,6 +184,17 @@ if(getUsersRequestsTesting){
 			console.log("Error in test getUsersRequestsTesting " + err);
 		}
 		console.log("%j", requests);
+	});
+
+}
+
+if(getAllRequestedShareablesTest){
+	//Removing the first object in the DB
+	sql_queries.getAllRequestedShareables(dbInfo, function(err, requestedShareables){
+		if(err){
+			console.log("Error in test getAllRequestedShareablesTest " + err);
+		}
+		console.log("%j", requestedShareables);
 	});
 
 }
