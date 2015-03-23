@@ -1,0 +1,22 @@
+var shareWhereLogo =
+"  ___ _               __      ___                \n" +
+" / __| |_  __ _ _ _ __\\ \\    / / |_  ___ _ _ ___ \n" +
+" \\__ \\ ' \\/ _` | '_/ -_) \\/\\/ /| ' \\/ -_) '_/ -_)\n" +
+" |___/_||_\\__,_|_| \\___|\\_/\\_/ |_||_\\___|_| \\___|";
+
+module.exports = {
+  printLogo: function() {
+    console.log(shareWhereLogo);
+    console.log("    Written for COP 4334 at UCF during Spr2015");
+    console.log("");
+  },
+  getSuitablePort: function() {
+    var port = 80; // default on Windows
+
+    // on POSIX systems, fall back to another port
+    if(process.getuid && process.getuid != 0)
+      port = 8000;
+
+    return port;
+  }
+}

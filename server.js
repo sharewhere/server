@@ -5,16 +5,13 @@ var cookieParser = require('cookie-parser')
 var session = require('express-session')
 var mysql = require('mysql');
 var sqlQueries = require('./sql_queries');
+var util = require('./util');
 
 var app = express();
 
-var portNumber = 80;
-
-// middleware
-
-//app.use(express.bodyParser());
-//app.use(express.cookieParser('shhhh, very secret'));
-//app.use(express.session());
+// ###############################
+// # Middleware
+// ###############################
 app.use(bodyParser());
 app.use(cookieParser('shhhh, very secret'));
 app.use(session());
@@ -229,13 +226,12 @@ app.get('/offers', function(req, res) {
     res.json({userOffers : usersOffers});
   });
 });
-var logo =
-"  ___ _               __      ___                \n" +
-" / __| |_  __ _ _ _ __\\ \\    / / |_  ___ _ _ ___ \n" +
-" \\__ \\ ' \\/ _` | '_/ -_) \\/\\/ /| ' \\/ -_) '_/ -_)\n" +
-" |___/_||_\\__,_|_| \\___|\\_/\\_/ |_||_\\___|_| \\___|";
 
-console.log(logo);
+// ###############################
+// # Startup
+// ###############################
+util.printLogo()
 
+var portNumber = util.getSuitablePort();
 app.listen(portNumber);
 console.log('ShareWhere server started on port ' + portNumber);
