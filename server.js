@@ -37,11 +37,6 @@ var dbInfo = {
   database : 'ShareWhereTest'
 }
 
-var connection = mysql.createConnection(dbInfo);
-
-//connect to the database
-connection.connect();
-
  //Debug purposes
  //True means use the sql database
  //false means use the "database" created in code.
@@ -70,7 +65,7 @@ function authenticate(name, pass, fn) {
   if (!module.parent) console.log('authenticating %s:%s', name, pass);
   if(use_sql_database){
     var userSelectStatement = "select * from users where username = '" + name+"'";
-
+    var connection = mysql.createConnection(dbInfo);
 	connection.query(userSelectStatement, function(err, rows, fields){
 		if (err) throw err;
 		if(rows.length <1){
@@ -83,6 +78,7 @@ function authenticate(name, pass, fn) {
 			fn(new Error('invalid password'));
 	    })
 	});
+      connection.end();
   }
   else{
 	  var user = users[name];
