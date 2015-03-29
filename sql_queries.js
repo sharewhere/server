@@ -198,6 +198,7 @@ module.exports={
 		});
 	},
 	
+	//TODO whenever this is done it should also insert a row into the transactions table to log the request.
 	offerOnRequest: function(dbInfo, shar_id, username){
 		//The shareable has to be in requesting or requested_received_offer
 		//The user must be authenticated and have username defined
@@ -217,9 +218,13 @@ module.exports={
 				//Shareable is not in proper state for offering.
 				throw new Error("Shareable can't be offered in this state");
 			}
-			queryString = "UPDATE shareables SET state_id = "+
-			"(select state_id from shareable_states where state_name = 'requested_received_offer') where shar_id = '"
-			+shar_id+"';";
+			queryString = "UPDATE shareables SET state_id = \
+			(select state_id from shareable_states where state_name = 'requested_received_offer') where shar_id = '"
+			+shar_id+"'; \
+			INSERT INTO transactions \
+				(lender, borrower, shar_id, type_id) \
+			values \
+				('"+username+"', (select username from shareables where shar_id = "+shar_id+"), '"+shar_id+"', (select type_id from transaction_types where type_name = 'request/offer'));";
 			
 			conn = mysql.createConnection(dbInfo);
 			conn.query(queryString, function(err, rows, fields){
@@ -229,6 +234,7 @@ module.exports={
 		});
 	},
 
+	//TODO whenever this is done it should also insert a row into the transactions table to log the request.
 	requestOnOffer: function(dbInfo, shar_id, username){
 		if(!shar_id){
 			throw new Error("Shareable doesn't have shar_id set in requestOnOffer");
@@ -239,11 +245,15 @@ module.exports={
 			}
 			var allowableStates = ["offering", "offered_received_request"];
 			if(!(allowableStates.indexOf(shareable.state_name) > -1)){
-				throw new Error("shareable can't be offered in this state.");
+				throw new Error("shareable can't be requested in this state.");
 			}
 			queryString = "UPDATE shareables SET state_id = "+
 			"(select state_id from shareable_states where state_name = 'offered_received_request') where shar_id = '"
-			+shar_id+"';";
+			+shar_id+"'; \
+			INSERT INTO transactions \
+				(lender, borrower, shar_id, type_id) \
+			values \
+				((select username from shareables where shar_id = "+shar_id+"), '"+username+"', '"+shar_id+"', (select type_id from transaction_types where type_name = 'request/offer'));"";
 
 			conn = mysql.createConnection(dbInfo);
 			conn.query(queryString, function(err, rows, fields){
