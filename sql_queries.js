@@ -114,11 +114,11 @@ module.exports={
 								shareables.shar_id, username, shar_name, description, state_name, creation_date, lender, borrower \
 								from shareables \
 								left outer join transactions \
-								on transactions.lender='"+username+"' \
+								on transactions.shar_id=shareables.shar_id \
 								and shareables.shar_id = transactions.shar_id \
 								inner join shareable_states \
 								on shareables.state_id = shareable_states.state_id \
-								where shareables.state_id in (select state_id from shareable_states where (shareables.username = '"+username+"' and(state_name = 'requesting' or state_name='requested_received_offer')) or (state_name = 'offered_received_request' and shareables.username != '"+username+"'));";
+								where shareables.state_id in (select state_id from shareable_states where (shareables.username = '"+username+"' and(state_name = 'requesting' or state_name='requested_received_offer')) or (state_name = 'offered_received_request' and transactions.borrower = '"+username+"'));";
 		conn = mysql.createConnection(dbInfo);
 		conn.query(queryString, function(err, rows, fields){
 			fn(err, rows);
@@ -134,11 +134,11 @@ module.exports={
 								shareables.shar_id, username, shar_name, description, state_name, creation_date, lender, borrower \
 								from shareables \
 								left outer join transactions \
-								on transactions.lender='"+username+"' \
+								on transactions.shar_id=shareables.shar_id \
 								and shareables.shar_id = transactions.shar_id \
 								inner join shareable_states \
 								on shareables.state_id = shareable_states.state_id \
-								where shareables.state_id in (select state_id from shareable_states where (shareables.username = '"+username+"' and(state_name = 'offering' or state_name='offered_received_request')) or (state_name = 'requested_received_offer' and shareables.username != '"+username+"'));";
+								where shareables.state_id in (select state_id from shareable_states where (shareables.username = '"+username+"' and(state_name = 'offering' or state_name='offered_received_request')) or (state_name = 'requested_received_offer' and transactions.lender = '"+username+"'));";
 		conn = mysql.createConnection(dbInfo);
 		conn.query(queryString, function(err, rows, fields){
 			fn(err, rows);
