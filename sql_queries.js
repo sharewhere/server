@@ -253,7 +253,7 @@ module.exports={
 			INSERT INTO transactions \
 				(lender, borrower, shar_id, type_id) \
 			values \
-				((select username from shareables where shar_id = "+shar_id+"), '"+username+"', '"+shar_id+"', (select type_id from transaction_types where type_name = 'request/offer'));"";
+				((select username from shareables where shar_id = "+shar_id+"), '"+username+"', '"+shar_id+"', (select type_id from transaction_types where type_name = 'request/offer'));";
 
 			conn = mysql.createConnection(dbInfo);
 			conn.query(queryString, function(err, rows, fields){
