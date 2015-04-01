@@ -1,5 +1,5 @@
 var hash = require('./pass').hash;
-var mysql      = require('mysql');
+var mysql = require('mysql');
 
 getEntityByPrimaryKey = function(dbInfo, entityTable, primaryKey, primaryValue, fn){
 	if(!primaryValue){
@@ -114,11 +114,11 @@ module.exports={
 								shareables.shar_id, username, shar_name, description, state_name, creation_date, lender, borrower \
 								from shareables \
 								left outer join transactions \
-								on transactions.lender='"+username+"' \
+								on transactions.shar_id=shareables.shar_id \
 								and shareables.shar_id = transactions.shar_id \
 								inner join shareable_states \
 								on shareables.state_id = shareable_states.state_id \
-								where shareables.state_id in (select state_id from shareable_states where (shareables.username = '"+username+"' and(state_name = 'requesting' or state_name='requested_received_offer')) or (state_name = 'offered_received_request' and shareables.username != '"+username+"'));";
+								where shareables.state_id in (select state_id from shareable_states where (shareables.username = '"+username+"' and(state_name = 'requesting' or state_name='requested_received_offer')) or (state_name = 'offered_received_request' and transactions.borrower = '"+username+"'));";
 		conn = mysql.createConnection(dbInfo);
 		conn.query(queryString, function(err, rows, fields){
 			fn(err, rows);
@@ -134,11 +134,11 @@ module.exports={
 								shareables.shar_id, username, shar_name, description, state_name, creation_date, lender, borrower \
 								from shareables \
 								left outer join transactions \
-								on transactions.lender='"+username+"' \
+								on transactions.shar_id=shareables.shar_id \
 								and shareables.shar_id = transactions.shar_id \
 								inner join shareable_states \
 								on shareables.state_id = shareable_states.state_id \
-								where shareables.state_id in (select state_id from shareable_states where (shareables.username = '"+username+"' and(state_name = 'offering' or state_name='offered_received_request')) or (state_name = 'requested_received_offer' and shareables.username != '"+username+"'));";
+								where shareables.state_id in (select state_id from shareable_states where (shareables.username = '"+username+"' and(state_name = 'offering' or state_name='offered_received_request')) or (state_name = 'requested_received_offer' and transactions.lender = '"+username+"'));";
 		conn = mysql.createConnection(dbInfo);
 		conn.query(queryString, function(err, rows, fields){
 			fn(err, rows);
@@ -198,6 +198,7 @@ module.exports={
 		});
 	},
 	
+	//TODO whenever this is done it should also insert a row into the transactions table to log the request.
 	offerOnRequest: function(dbInfo, shar_id, username){
 		//The shareable has to be in requesting or requested_received_offer
 		//The user must be authenticated and have username defined
@@ -217,9 +218,13 @@ module.exports={
 				//Shareable is not in proper state for offering.
 				throw new Error("Shareable can't be offered in this state");
 			}
-			queryString = "UPDATE shareables SET state_id = "+
-			"(select state_id from shareable_states where state_name = 'requested_received_offer') where shar_id = '"
-			+shar_id+"';";
+			queryString = "UPDATE shareables SET state_id = \
+			(select state_id from shareable_states where state_name = 'requested_received_offer') where shar_id = '"
+			+shar_id+"'; \
+			INSERT INTO transactions \
+				(lender, borrower, shar_id, type_id) \
+			values \
+				('"+username+"', (select username from shareables where shar_id = "+shar_id+"), '"+shar_id+"', (select type_id from transaction_types where type_name = 'request/offer'));";
 			
 			conn = mysql.createConnection(dbInfo);
 			conn.query(queryString, function(err, rows, fields){
@@ -229,6 +234,7 @@ module.exports={
 		});
 	},
 
+	//TODO whenever this is done it should also insert a row into the transactions table to log the request.
 	requestOnOffer: function(dbInfo, shar_id, username){
 		if(!shar_id){
 			throw new Error("Shareable doesn't have shar_id set in requestOnOffer");
@@ -239,11 +245,15 @@ module.exports={
 			}
 			var allowableStates = ["offering", "offered_received_request"];
 			if(!(allowableStates.indexOf(shareable.state_name) > -1)){
-				throw new Error("shareable can't be offered in this state.");
+				throw new Error("shareable can't be requested in this state.");
 			}
 			queryString = "UPDATE shareables SET state_id = "+
 			"(select state_id from shareable_states where state_name = 'offered_received_request') where shar_id = '"
-			+shar_id+"';";
+			+shar_id+"'; \
+			INSERT INTO transactions \
+				(lender, borrower, shar_id, type_id) \
+			values \
+				((select username from shareables where shar_id = "+shar_id+"), '"+username+"', '"+shar_id+"', (select type_id from transaction_types where type_name = 'request/offer'));";
 
 			conn = mysql.createConnection(dbInfo);
 			conn.query(queryString, function(err, rows, fields){
