@@ -4,10 +4,11 @@ var shareWhereLogo =
 " \\__ \\ ' \\/ _` | '_/ -_) \\/\\/ /| ' \\/ -_) '_/ -_)\n" +
 " |___/_||_\\__,_|_| \\___|\\_/\\_/ |_||_\\___|_| \\___|";
 
+
 module.exports = {
   printLogo: function() {
     console.log(shareWhereLogo);
-    console.log("    Written for COP 4334 at UCF during Spr2015");
+    console.log("      Written for COP 4331C at UCF during Spr2015");
     console.log("");
   },
   getSuitablePort: function() {
