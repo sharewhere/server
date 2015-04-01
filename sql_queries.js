@@ -1,5 +1,5 @@
 var hash = require('./pass').hash;
-var mysql      = require('mysql');
+var mysql = require('mysql');
 
 getEntityByPrimaryKey = function(dbInfo, entityTable, primaryKey, primaryValue, fn){
 	if(!primaryValue){
