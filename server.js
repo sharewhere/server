@@ -34,7 +34,8 @@ var dbInfo = {
   host     : 'localhost',
   user     : 'ShareWhereUser',
   password : 'N3onIc3d',
-  database : 'ShareWhereTest'
+  database : 'ShareWhereTest',
+  dateStrings : true
 }
 
  //Debug purposes
