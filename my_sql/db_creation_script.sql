@@ -129,6 +129,8 @@ VALUES
 ('Map', 'Need to find my path.', 'tj', (select state_id from shareable_states where state_name = 'requesting'), NOW()),
 ('Toy', 'I wanna have fun.', 'tj', (select state_id from shareable_states where state_name = 'requesting'), NOW()),
 ('Plane', 'Planes are the best.', 'jeff', (select state_id from shareable_states where state_name = 'offered_received_request'), NOW()),
+('Chair', 'Take a seat, this chair is pretty comfy.', 'tj', (select state_id from shareable_states where state_name = 'offering'), NOW()),
+('Sunblock', 'I want to go to the pool but I burn easy.', 'jeff', (select state_id from shareable_states where state_name = 'requested_received_offer'), NOW()),
 ('Headphones', 'jam out', 'tj', (select state_id from shareable_states where state_name = 'requested_received_offer'), NOW());
 
 
@@ -144,4 +146,6 @@ INSERT INTO transactions
 (lender, borrower, shar_id, type_id)
 values
 ('jeff', 'tj', (select shar_id from shareables where username = 'jeff' and shar_name = 'Plane'), (select type_id from transaction_types where type_name = 'request/offer')),
-('jeff', 'tj', (select shar_id from shareables where username = 'tj' and shar_name = 'Headphones'), (select type_id from transaction_types where type_name = 'request/offer'));
+('jeff', 'tj', (select shar_id from shareables where username = 'tj' and shar_name = 'Headphones'), (select type_id from transaction_types where type_name = 'request/offer')),
+('tj', 'jeff', (select shar_id from shareables where username = 'jeff' and shar_name = 'Sunblock'), (select type_id from transaction_types where type_name = 'request/offer')),
+('lisa', 'tj', (select shar_id from shareables where username = 'tj' and shar_name = 'Headphones'), (select type_id from transaction_types where type_name = 'request/offer'));
