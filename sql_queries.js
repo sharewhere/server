@@ -148,20 +148,24 @@ module.exports={
 	//The shareable that is being added is added for that user.
 	addShareable: function(dbInfo, shareable, user, fn){
 		if(!shareable.shar_name){
-			throw new Error("No shar_name set in addShareable");
+			fn("No shar_name set in addShareable");
 		}
-		if(!shareable.shareableState){
-			throw new Error("No shareableState set in addShareable");
+		if(!shareable.state_name){
+			fn("No shareableState set in addShareable");
+		}
+		var allowableStates = ["requesting", "offering"];
+		if(!(allowableStates.indexOf(shareable.state_name) > -1)) {
+			fn("Shareable state is not one of the allowed states for creating a shareable.");
 		}
 		if(!user.username){
-			throw new Error("No username set in addShareable");
+			fn("No username set in addShareable");
 		}
 		if(!shareable.description){
 			shareable.description = '';
 		}
 		queryString = "insert into shareables(shar_name, description, username, state_id) VALUES ('";
 		queryString = queryString + shareable.shar_name +"', '"+shareable.description+"','"+user.username
-			+"',(select state_id from shareable_states where state_name = '"+shareable.shareableState+"'));";
+			+"',(select state_id from shareable_states where state_name = '"+shareable.state_name+"'));";
 		
 		conn = mysql.createConnection(dbInfo);
 		conn.query(queryString, function(err, rows, fields){
@@ -170,13 +174,28 @@ module.exports={
 		conn.end();
 	},
 	
+	apiAddShareable: function(dbInfo, shareable, user, fn) {
+		module.exports.addShareable(dbInfo, shareable, user, function(err, rows, fields) {
+			if(err) {
+				fn(err);
+			}
+			if(!rows.insertId) {
+				fn(new Error("insertId not obtained in apiAddShareable."));
+			}
+			module.exports.getShareable(dbInfo, rows.insertId, function(err2, rows2, fields2) {
+				fn(err2, rows2, fields2);
+			});
+		});
+	},
+	
 	//Can't use getEntityByPrimaryKey because it needs to join on shareable_state
 	getShareable: function(dbInfo, shar_id, fn){
 		if(!shar_id){
 			throw new Error("No shar_id set in getShareable");
 		}
-		var queryString = "select * from shareables inner join shareable_states on "
-		+ "shareables.state_id = shareable_states.state_id where shar_id ='"+shar_id+"';";
+		var queryString = "select shareables.*, shareable_states.state_name, zip_code from shareables inner join shareable_states on \
+		shareables.state_id = shareable_states.state_id inner join users \
+		on shareables.username = users.username where shar_id ='"+shar_id+"';";
 		
 		conn = mysql.createConnection(dbInfo);
 		conn.query(queryString, function(err, rows, fields){

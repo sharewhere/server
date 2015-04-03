@@ -4,7 +4,8 @@ var dbInfo = {
   host     : 'localhost',
   user     : 'ShareWhereUser',
   password : 'N3onIc3d',
-  database : 'ShareWhereTest'
+  database : 'ShareWhereTest',
+  dateStrings : true
 };
 var connection = mysql.createConnection(dbInfo);
 
@@ -23,6 +24,7 @@ var getUsersRequestsTesting = false;
 var getAllOfferedShareablesTest = false;
 var getAllRequestedShareablesTest = false;
 var getUsersOffersTest = false;
+var apiAddShareableTesting = true;
 
 connection.connect();
 
@@ -74,7 +76,7 @@ if(getUsersShareablesTesting){
 	var username = "tj";
 	sql_queries.getUsersShareables(dbInfo, username, function(err, rows, fields){
 		if(err){
-			console.log("error in test removeUser: "+err);
+			console.log("error in test getUsers: "+err);
 		}
 		console.log(rows);
 	});
@@ -83,7 +85,7 @@ if(getUsersShareablesTesting){
 if(addShareableTesting){
 	shareable = {
 		shar_name: "broom",
-		shareableState: "requesting",
+		state_name: "requesting",
 		description: "Oi, I need a broom to sweep me kitchen."
 	};
 	uploadingUser = {
@@ -91,7 +93,24 @@ if(addShareableTesting){
 	};
 	sql_queries.addShareable(dbInfo, shareable, uploadingUser,  function(err, rows, fields){
 		if(err){
-			console.log("error in test removeUser: "+err);
+			console.log("error in test addShareable: "+err);
+		}
+		console.log(rows);
+	});
+}
+
+if(apiAddShareableTesting) {
+	shareable = {
+		shar_name: "broom",
+		state_name: "requesting",
+		description: "Oi, I need a broom to sweep me kitchen."
+	};
+	uploadingUser = {
+		username: "tj"
+	};
+	sql_queries.apiAddShareable(dbInfo, shareable, uploadingUser,  function(err, rows, fields){
+		if(err){
+			console.log("error in test apiAddShareable: "+err);
 		}
 		console.log(rows);
 	});
@@ -101,7 +120,7 @@ if(getShareableTesting){
 	console.log("Attempting to get the with shar_id 1");
 	sql_queries.getShareable(dbInfo, 1, function(err, shareable){
 		if(err){
-			console.log("error in test removeUser: "+err);
+			console.log("error in test getSharable: "+err);
 		}
 		console.log("Retrieved shareable: %j", shareable)
 	});

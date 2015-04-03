@@ -101,7 +101,7 @@ function restrict(req, res, next) {
     next();
   } else {
     req.session.error = 'Access denied!';
-    res.redirect('/login');
+    res.json({cookieValid : false});
   }
 }
 
@@ -112,6 +112,14 @@ app.get('/', function(req, res){
 app.get('/restricted', restrict, function(req, res){
   res.send('Wahoo! restricted area, click to <a href="/logout">logout</a>');
 });
+
+app.get('/cookiecheck', function(req, res) {
+	if (req.session.user) {
+		res.json({cookieValid : true});
+  } else {
+		res.json({cookieValid : false});
+  }
+})
 
 //DEBUG
 app.get('/sessionInfo', restrict, function(req,res){
@@ -211,7 +219,10 @@ app.get('/browseRequests', function(req, res){
 app.get('/requests', function(req,res) {
   console.log("Attempting to get all offer type shareables the user is involved with");
   sqlQueries.getUsersRequests(dbInfo, req.query.username, function(err, usersRequests){
-    if(err) throw err;
+    if(err) {
+		console.log(err);
+		res.json({success : false, error_message : "error in offers : "+err})
+	}
     res.json({userRequests : usersRequests});
   });
 });
@@ -219,11 +230,116 @@ app.get('/requests', function(req,res) {
 app.get('/offers', function(req, res) {
   console.log("Attempting to get all offer type shareables the user is involved with");
   sqlQueries.getUsersOffers(dbInfo, req.query.username, function(err, usersOffers){
-    if(err) throw err;
+    if(err) {
+		console.log(err);
+		res.json({success : false, error_message : "error in offers : "+err})
+	}
     res.json({userOffers : usersOffers});
   });
 });
 
+app.post('/makeshareablerequest', function(req, res) {
+	//
+	// debug code
+	console.log('Attempting to make a shareable request.');
+	console.log("shar_name : "+req.body.shar_name);
+	//
+	if(!req.body.shar_name) {
+		res.json({
+			sucess : false,
+			error_message : "shar_name not set."
+		})
+		return;
+	}
+	if(!req.body.username) {
+		res.json({
+			sucess : false,
+			error_message : "Username not set, this is for testing. Usually username will be obtained through session."
+		})
+		return;
+	}
+	var shareableDescription;
+	if(!req.body.description) {
+		shareableDescription = "";
+	}
+	else {
+		shareableDescription = req.body.description;
+	}
+	
+	shareable = {
+		shar_name: req.body.shar_name,
+		state_name: "requesting",
+		description: shareableDescription
+	};
+	uploadingUser = {
+		username: req.body.username
+	};
+	sqlQueries.apiAddShareable(dbInfo, shareable, uploadingUser,  function(err, shareable, fields){
+		if(err){
+			res.json({
+				sucess : false,
+				error_message : "error in route makeshareablerequest: "+err
+			})
+			return;
+		}
+		res.json({
+			success : true,
+			shareable_added : shareable
+		});
+		return;
+	});
+});
+
+app.post('/makeshareableoffer', function(req, res) {
+	//
+	// debug code
+	console.log('Attempting to make a shareable request.');
+	//
+	if(!req.body.shar_name) {
+		res.json({
+			sucess : false,
+			error_message : "shar_name not set."
+		})
+		return;
+	}
+	if(!req.body.username) {
+		res.json({
+			sucess : false,
+			error_message : "Username not set, this is for testing. Usually username will be obtained through session."
+		})
+		return;
+	}
+	var shareableDescription;
+	if(!req.body.description) {
+		shareableDescription = "";
+	}
+	else {
+		shareableDescription = req.body.description;
+	}
+	
+	shareable = {
+		shar_name: req.body.shar_name,
+		state_name: "offering",
+		description: shareableDescription
+	};
+	uploadingUser = {
+		username: req.body.username
+	};
+	sqlQueries.apiAddShareable(dbInfo, shareable, uploadingUser,  function(err, shareable, fields){
+		if(err){
+			res.json({
+				sucess : false,
+				error_message : "error in route makeshareablerequest: "+err
+			})
+			return;
+		}
+		res.json({
+			success : true,
+			shareable_added : shareable
+		});
+		return;
+	});
+});
 
 // ###############################
 // # Startup
