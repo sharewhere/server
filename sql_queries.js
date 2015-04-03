@@ -149,16 +149,20 @@ module.exports={
 	addShareable: function(dbInfo, shareable, user, fn){
 		if(!shareable.shar_name){
 			fn("No shar_name set in addShareable");
+			return;
 		}
 		if(!shareable.state_name){
 			fn("No shareableState set in addShareable");
+			return;
 		}
 		var allowableStates = ["requesting", "offering"];
 		if(!(allowableStates.indexOf(shareable.state_name) > -1)) {
 			fn("Shareable state is not one of the allowed states for creating a shareable.");
+			return;
 		}
 		if(!user.username){
 			fn("No username set in addShareable");
+			return;
 		}
 		if(!shareable.description){
 			shareable.description = '';
@@ -178,9 +182,11 @@ module.exports={
 		module.exports.addShareable(dbInfo, shareable, user, function(err, rows, fields) {
 			if(err) {
 				fn(err);
+				return;
 			}
 			if(!rows.insertId) {
 				fn(new Error("insertId not obtained in apiAddShareable."));
+				return;
 			}
 			module.exports.getShareable(dbInfo, rows.insertId, function(err2, rows2, fields2) {
 				fn(err2, rows2, fields2);
@@ -303,7 +309,7 @@ module.exports={
 	},
 
 	getAllOfferedShareables: function(dbInfo, fn){
-		queryString = "SELECT * from shareables inner join shareable_states on shareables.state_id = shareable_states.state_id where state_name = 'offering' or state_name = 'offered_received_request'";
+		queryString = "SELECT shareables.*, state_name, zip_code from shareables inner join shareable_states on shareables.state_id = shareable_states.state_id inner join users on shareables.username = users.username where state_name = 'offering' or state_name = 'offered_received_request'";
 		conn = mysql.createConnection(dbInfo);
 		conn.query(queryString, function(err, rows, fields){
 			if(err) throw err;
@@ -313,7 +319,7 @@ module.exports={
 	},
 
 	getAllRequestedShareables: function(dbInfo, fn){
-		queryString = "SELECT * from shareables inner join shareable_states on shareables.state_id = shareable_states.state_id where state_name = 'requesting' or state_name = 'requested_received_offer'";
+		queryString = "SELECT shareables.*, state_name, zip_code from shareables inner join shareable_states on shareables.state_id = shareable_states.state_id inner join users on shareables.username = users.username where state_name = 'requesting' or state_name = 'requested_received_offer'";
 		conn = mysql.createConnection(dbInfo);
 		conn.query(queryString, function(err, rows, field){
 			if(err) throw err;

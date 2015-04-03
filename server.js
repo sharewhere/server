@@ -196,23 +196,25 @@ app.post('/register', function(req, res){
 
 });
 
-app.get('/browseOffers', function(req, res){
+app.get('/browseoffers', function(req, res){
   console.log("Attempting to get all offered Shareables");
   sqlQueries.getAllOfferedShareables(dbInfo, function(err, offeredShareables){
     if(err){
-      throw new Error("Error trying to get all Offered Shareables. " + err);
+		console.log(err);
+		res.json({success : false, error_message : "error in browseoffers : "+err})
     }
-    res.json({shareables: offeredShareables})
+    res.json({success : true, offers : offeredShareables})
   });
 });
 
-app.get('/browseRequests', function(req, res){
+app.get('/browserequests', function(req, res){
   console.log("Attempting to get all reqested Shareables");
   sqlQueries.getAllRequestedShareables(dbInfo, function(err, requestedShareables){
     if(err){
-      throw new Error("Error trying to get all Requested Shareables. " + err);
+		console.log(err);
+		res.json({success : false, error_message : "error in browserequests : "+err})
     }
-    res.json({shareables : requestedShareables})
+    res.json({success : true, requests : requestedShareables})
   });
 });
 
@@ -221,7 +223,7 @@ app.get('/requests', function(req,res) {
   sqlQueries.getUsersRequests(dbInfo, req.query.username, function(err, usersRequests){
     if(err) {
 		console.log(err);
-		res.json({success : false, error_message : "error in offers : "+err})
+		res.json({success : false, error_message : "error in requests : "+err})
 	}
     res.json({userRequests : usersRequests});
   });
@@ -242,7 +244,6 @@ app.post('/makeshareablerequest', function(req, res) {
 	//
 	// debug code
 	console.log('Attempting to make a shareable request.');
-	console.log("shar_name : "+req.body.shar_name);
 	//
 	if(!req.body.shar_name) {
 		res.json({

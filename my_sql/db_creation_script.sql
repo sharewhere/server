@@ -67,7 +67,8 @@ create table shareables (
     state_id       int,
     primary key (shar_id),
     foreign key (username) references users(username),
-    foreign key (state_id) references shareable_states(state_id)
+    foreign key (state_id) references shareable_states(state_id),
+	UNIQUE (shar_name, username)
 );
 
 #request/offer, reserved, lent/borrowed, completed
