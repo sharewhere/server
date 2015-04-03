@@ -24,7 +24,9 @@ var getUsersRequestsTesting = false;
 var getAllOfferedShareablesTest = false;
 var getAllRequestedShareablesTest = false;
 var getUsersOffersTest = false;
-var apiAddShareableTesting = true;
+var apiAddShareableTesting = false;
+var getReqOffTransMineTesting = false;
+var apiGetReqOffShareableTesting = false;
 
 connection.connect();
 
@@ -209,18 +211,15 @@ if(getUsersRequestsTesting){
 }
 
 if(getUsersOffersTest){
-	//Removing the first object in the DB
 	sql_queries.getUsersOffers(dbInfo, 'jeff', function(err, offers){
 		if(err){
 			console.log("Error in test getUsersOffersTest " + err);
 		}
 		console.log("%j", offers);
 	});
-
 }
 
 if(getAllRequestedShareablesTest){
-	//Removing the first object in the DB
 	sql_queries.getAllRequestedShareables(dbInfo, function(err, requestedShareables){
 		if(err){
 			console.log("Error in test getAllRequestedShareablesTest " + err);
@@ -229,4 +228,24 @@ if(getAllRequestedShareablesTest){
 	});
 
 }
+
+if(getReqOffTransMineTesting) {
+	sql_queries.getReqOffTransMine(dbInfo, 9, function(err, transactions){
+		if(err){
+			console.log("Error in test getReqOffTransMineTesting " + err);
+		}
+		console.log("%j", transactions);
+	});
+}
+
+if(apiGetReqOffShareableTesting) {
+	console.log("Attempting to test the apiGetReqOffShareable sql query.");
+	sql_queries.apiGetReqOffShareable(dbInfo, 9, "jeff", function(err, shr, trn){
+		if(err){
+			console.log("Error in test apiGetReqOffShareableTesting " + err);
+		}
+		console.log({shareable : shr, transactions : trn});
+	});
+}
+
 connection.end();

@@ -240,6 +240,38 @@ app.get('/offers', function(req, res) {
   });
 });
 
+app.get('/viewreqoffshareable', function(req, res) {
+	if(!req.query.shar_id) {
+		res.json({
+			sucess : false,
+			error_message : "shar_id not set."
+		})
+		return;
+	}
+	if(!req.query.username) {
+		res.json({
+			sucess : false,
+			error_message : "username not set."
+		})
+		return;
+	}
+	sqlQueries.apiGetReqOffShareable(dbInfo, req.query.shar_id, req.query.username, function(err, shrble, trnsction) {
+		if(err) {
+			res.json({
+				sucess : false,
+				error_message : "Error getting the shareable info in apiGetReqOffShareable: "+err
+			})
+			return;
+		}
+		if(shrble.username == req.query.username) {
+			res.json({shareable : shrble, transactions : trnsction});
+		}
+		else {
+			res.json({shareable : shrble, transaction : trnsction});
+		}
+	});
+});
+
 app.post('/makeshareablerequest', function(req, res) {
 	//
 	// debug code

@@ -188,8 +188,8 @@ module.exports={
 				fn(new Error("insertId not obtained in apiAddShareable."));
 				return;
 			}
-			module.exports.getShareable(dbInfo, rows.insertId, function(err2, rows2, fields2) {
-				fn(err2, rows2, fields2);
+			module.exports.getShareable(dbInfo, rows.insertId, function(err2, rows2) {
+				fn(err2, rows2);
 			});
 		});
 	},
@@ -214,7 +214,81 @@ module.exports={
 		});
 		conn.end();
 	},
+	
+	getReqOffTransMine : function(dbInfo, shar_id, fn) {
+		if(!shar_id){
+			fn(new Error("No shar_id set in getReqOffTransMine"));
+			return;
+		}
+		
+		var queryString = "select * from transactions where transactions.shar_id = '"+shar_id+"';";
+		
+		conn = mysql.createConnection(dbInfo);
+		conn.query(queryString, function(err, rows, fields){
+			if (err) {
+				fn(err);
+				return;
+			}			
+			fn(err, rows);
+		});
+		conn.end();
+	},
 
+	//The username is the person trying to view the reqoffshareable.
+	getReqOffTransOther : function(dbInfo, shar_id, username, fn) {
+		if(!shar_id){
+			fn(new Error("No shar_id set in getReqOffTransOther"));
+			return;
+		}
+		if(!username){
+			fn(new Error("No shar_id set in getReqOffTransOther"));
+			return;
+		}
+		var queryString = "select * from transactions where shar_id = '"+shar_id+"' and (lender = '"+username+"' or borrower = '"+username+"');";
+		
+		conn = mysql.createConnection(dbInfo);
+		conn.query(queryString, function(err, row, fields){
+			if (err) {
+				fn(err);
+				return;
+			}			
+			fn(err, row);
+		});
+		conn.end();		
+	},
+	
+	apiGetReqOffShareable : function(dbInfo, shar_id, username, fn) {
+		if(!shar_id){
+			fn(new Error("No shar_id set in apiGetReqOffShareable"));
+			return;
+		}
+		if(!username){
+			fn(new Error("No shar_id set in apiGetReqOffShareable"));
+			return;
+		}
+		
+		module.exports.getShareable(dbInfo, shar_id, function(err, shareable) {
+				if(shareable.username == username) {
+					module.exports.getReqOffTransMine(dbInfo, shar_id, function(err, transactions) {
+						if(err) {
+							fn(err);
+							return;
+						}
+						fn(err, shareable, transactions);
+					});
+				}
+				else {
+					module.exports.getReqOffTransOther(dbInfo, shar_id, username, function(err, transaction) {
+						if(err) {
+							fn(err);
+							return;
+						}
+						fn(err, shareable, transaction);
+					})
+				}
+		});
+	},
+	
 	removeShareable :function(dbInfo, shar_id, fn){
 		removeEntityByPrimaryKey(dbInfo, "shareables", "shar_id", shar_id, function(err, user){
 			fn(err, user);
