@@ -26,6 +26,10 @@ app.use(function(req, res, next){
   res.locals.message = '';
   if (err) res.locals.message = '<p class="msg error">' + err + '</p>';
   if (msg) res.locals.message = '<p class="msg success">' + msg + '</p>';
+
+  // IP and endpoint logging
+  console.log("[%s] %s", req.ip, req.url);
+
   next();
 });
 
@@ -63,7 +67,6 @@ hash('foobar', function(err, salt, hash){
 // Authenticate using our plain-object database of doom!
 // Unless use_sql_database = true. Then you use local my_sql database.
 function authenticate(name, pass, fn) {
-  if (!module.parent) console.log('authenticating %s:%s', name, pass);
   if(use_sql_database){
     var userSelectStatement = "select * from users where username = '" + name+"'";
     var connection = mysql.createConnection(dbInfo);
@@ -155,12 +158,14 @@ app.post('/login', function(req, res){
           + ' You may now access <a href="/restricted">/restricted</a>.';
         res.json({success : 'true' })
 
+        console.log("Auth success for %s", user);
       });
     } else {
       req.session.error = 'Authentication failed, please check your '
-        + ' username and password.'
-        + ' (use "tj" and "foobar")';
+        + ' username and password.';
       res.json({success : 'false'})
+
+      console.log("Auth failed for %s. Reason: %s", req.body.username, err);
     }
   });
 });
@@ -188,7 +193,7 @@ app.post('/register', function(req, res){
       req.session.success = 'Authenticated as ' + user.username
           + ' click to <a href="/logout">logout</a>. '
           + ' You may now access <a href="/restricted">/restricted</a>.';
-      console.log("Success in adding user " + user.username)
+      console.log("New user '%s'. Welcome!", user.username)
       res.json({success: 'true'})
     });
 
