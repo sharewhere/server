@@ -119,7 +119,8 @@ VALUES
 ("offered_received_request"),
 ("reserved"),
 ("lent/borrowed"),
-("returned");
+("returned"),
+("deleted");
 
 INSERT INTO shareables 
 (shar_name, description, username, state_id, creation_date)

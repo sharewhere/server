@@ -27,6 +27,7 @@ var getUsersOffersTest = false;
 var apiAddShareableTesting = false;
 var getReqOffTransMineTesting = false;
 var apiGetReqOffShareableTesting = false;
+var makeShareableDeletedTesting = false;
 
 connection.connect();
 
@@ -246,6 +247,15 @@ if(apiGetReqOffShareableTesting) {
 		}
 		console.log({shareable : shr, transactions : trn});
 	});
+}
+
+if(makeShareableDeletedTesting){
+	var deleteID = 1;
+	console.log("Attempting to delete shareable with shar_id "+ deleteID +" in deleteSharableTesting.");
+	sql_queries.makeShareableDeleted(dbInfo, deleteID, function(err, rows){
+		if(err) throw err;
+		console.log("%j", rows);
+ 	});
 }
 
 connection.end();

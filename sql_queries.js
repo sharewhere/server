@@ -400,6 +400,18 @@ module.exports={
 			fn(err, rows);
 		});
 		conn.end();
-	}
+	},
 
+
+	makeShareableDeleted: function(dbInfo, shar_id, fn){
+		queryString = "UPDATE shareables SET state_id = "+
+		"(select state_id from shareable_states where state_name = 'deleted') WHERE shar_id = '"+shar_id+"';";
+		conn = mysql.createConnection(dbInfo);
+		conn.query(queryString, function(err, rows){
+			if(err) throw err;
+			fn(err, rows);
+		});
+		conn.end();
+	}
+	
 };
