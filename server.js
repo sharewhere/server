@@ -6,6 +6,8 @@ var session = require('express-session')
 var mysql = require('mysql');
 var sqlQueries = require('./sql_queries');
 var util = require('./util');
+var fs = require('fs');
+var multer  = require('multer')
 
 var app = express();
 
@@ -15,6 +17,7 @@ var app = express();
 app.use(bodyParser());
 app.use(cookieParser('shhhh, very secret'));
 app.use(session());
+app.use(multer({ dest: __dirname+'/images/'}))
 
 // Session-persisted message middleware
 
@@ -377,6 +380,30 @@ app.post('/makeshareableoffer', function(req, res) {
 		});
 		return;
 	});
+});
+
+app.get('/images', function(req,res) {
+	res.sendfile(__dirname+'/images/plane.jpg');
+});
+
+app.post('/images', function(req,res){
+	picture = req.body.picture;
+	
+	
+	
+	console.log(req.file);
+	console.log(req.body);
+	console.log(req.files);
+	//console.log(req.body);
+	
+	fs.writeFile(__dirname +"/images/plane2.txt", JSON.stringify({test: "test"}), function(err) {
+		if(err) {
+			return console.log(err);
+		}
+
+		console.log("The file was saved!");
+	}); 
+	res.send("Hello");
 });
 
 // ###############################
