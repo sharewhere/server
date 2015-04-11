@@ -167,9 +167,12 @@ module.exports={
 		if(!shareable.description){
 			shareable.description = '';
 		}
-		queryString = "insert into shareables(shar_name, description, username, state_id) VALUES ('";
+        if(shareable.shar_pic_name != null){
+           shareable.shar_pic_name = "'"+shareable.shar_pic_name+"'"; 
+        }
+		queryString = "insert into shareables(shar_name, description, username, state_id, shar_pic_name) VALUES ('";
 		queryString = queryString + shareable.shar_name +"', '"+shareable.description+"','"+user.username
-			+"',(select state_id from shareable_states where state_name = '"+shareable.state_name+"'));";
+			+"',(select state_id from shareable_states where state_name = '"+shareable.state_name+"'), "+shareable.shar_pic_name+");";
 		
 		conn = mysql.createConnection(dbInfo);
 		conn.query(queryString, function(err, rows, fields){
