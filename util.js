@@ -19,5 +19,9 @@ module.exports = {
       port = 8000;
 
     return port;
+  },
+  
+  isEmptyObject: function(obj) {
+    return !Object.keys(obj).length;
   }
 }

@@ -35,6 +35,7 @@ use ShareWhereTest;
 create table ranks (
     rank_id         int auto_increment,
     rank_title      varchar(30) not null,
+	rank_threshold  int,
     primary key (rank_id)
 );
 
@@ -44,11 +45,10 @@ create table users (
     hash_code     varchar(40) not null,
     activation_date date not null,
     last_login      date,
-    rank_id         int not null,
     zip_code        varchar(10),
     email_address   varchar(30) not null,
-    primary key (username), 
-    foreign key (rank_id) references ranks(rank_id)    
+    points          int not null DEFAULT 0,
+    primary key (username)
 );
 
 #hidden, requesting, offering, requested_received_offer, offered_received_request, reserved, lent/borrowed, returned.
@@ -64,6 +64,7 @@ create table shareables (
     description    varchar(500),
     username       varchar(30) not null,
     creation_date datetime not null DEFAULT CURRENT_TIMESTAMP,
+    shar_pic_name  varchar(255),
     state_id       int,
     primary key (shar_id),
     foreign key (username) references users(username),
@@ -96,18 +97,18 @@ create table sessions (
 #Dummy data for testing the database
 
 #Create data for ranks table
-INSERT INTO ranks (rank_title)
+INSERT INTO ranks (rank_title, rank_threshold)
 VALUES 
-("Newbie"),
-("Getting there"),
-("Master");
+("Newbie", 0),
+("Getting there", 1),
+("Master", 8);
 
 INSERT INTO users 
-(username, salt, hash_code, activation_date, last_login, rank_id, zip_code, email_address)
+(username, salt, hash_code, activation_date, last_login, zip_code, email_address)
 VALUES 
-( 'tj', '12345678901234567890', 'fdfd75ed7db53c8c4f44d715bc64e8e8cff070ef', CURDATE(), CURDATE(), (SELECT rank_id FROM ranks WHERE rank_title = "Newbie"), '32816', 'c@c.c'),
-( 'lisa', '12345678901234567890', 'fdfd75ed7db53c8c4f44d715bc64e8e8cff070ef', CURDATE(), CURDATE(), (SELECT rank_id FROM ranks WHERE rank_title = "Newbie"), '32816', 'cf@c.c'),
-( 'jeff', '12345678901234567890', 'fdfd75ed7db53c8c4f44d715bc64e8e8cff070ef', CURDATE(), CURDATE(), (SELECT rank_id FROM ranks WHERE rank_title = "Newbie"), '32816', 'd@d.d');
+( 'tj', '12345678901234567890', 'fdfd75ed7db53c8c4f44d715bc64e8e8cff070ef', CURDATE(), CURDATE(), '32816', 'c@c.c'),
+( 'lisa', '12345678901234567890', 'fdfd75ed7db53c8c4f44d715bc64e8e8cff070ef', CURDATE(), CURDATE(), '32816', 'cf@c.c'),
+( 'jeff', '12345678901234567890', 'fdfd75ed7db53c8c4f44d715bc64e8e8cff070ef', CURDATE(), CURDATE(), '32816', 'd@d.d');
 
 INSERT INTO shareable_states 
 (state_name)
