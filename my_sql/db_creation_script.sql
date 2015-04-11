@@ -47,6 +47,7 @@ create table users (
     last_login      date,
     zip_code        varchar(10),
     email_address   varchar(30) not null,
+    rank_id int,
     points          int not null DEFAULT 0,
     primary key (username)
 );
@@ -63,7 +64,7 @@ create table shareables (
     shar_name      varchar(30) not null,
     description    varchar(500),
     username       varchar(30) not null,
-    creation_date datetime not null DEFAULT CURRENT_TIMESTAMP,
+    creation_date timestamp not null DEFAULT CURRENT_TIMESTAMP,
     shar_pic_name  varchar(255),
     state_id       int,
     primary key (shar_id),
