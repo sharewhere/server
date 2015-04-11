@@ -52,11 +52,11 @@ module.exports={
 			user.hash_code = hash.toString('hex');
 			
 			
-			var queryString = "INSERT INTO users (username, salt, hash_code, activation_date, last_login, rank_id, email_address";
+			var queryString = "INSERT INTO users (username, salt, hash_code, activation_date, last_login, email_address";
 			if(user.zip_code){
 				queryString = queryString + ', zip_code';
 			}
-			queryString = queryString +") VALUES ('"+user.username +"', '" +user.salt +"', '" +user.hash_code +"', CURDATE(), CURDATE(), (SELECT rank_id FROM ranks WHERE rank_title = 'Newbie'), '"+user.email_address;
+			queryString = queryString +") VALUES ('"+user.username +"', '" +user.salt +"', '" +user.hash_code +"', CURDATE(), CURDATE(), '"+user.email_address;
 			if(user.zip_code){
 				queryString = queryString +"', '"+user.zip_code;
 			}
