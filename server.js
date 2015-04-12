@@ -18,6 +18,7 @@ var app = express();
 app.use(bodyParser());
 app.use(cookieParser('shhhh, very secret'));
 app.use(session());
+app.use('/images', express.static('images'));
 
 // Session-persisted message middleware
 
@@ -399,18 +400,6 @@ app.post('/makeshareableoffer', restrict, multer({ dest: __dirname+'/images/'}),
         });
         return;
     });
-});
-
-app.get('/images', restrict, function(req,res) {
-    
-    if(!req.query.image) {
-        res.json({
-            success : false,
-            error_message : "image not set in images. image is the name of the image you are trying to retrieve, including extension."
-        })
-        return;
-    }
-    res.sendfile(__dirname+'/images/'+req.query.image);
 });
 
 app.get('/searchoffers', restrict, function(req, res){
