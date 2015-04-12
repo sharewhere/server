@@ -257,14 +257,7 @@ app.get('/viewreqoffshareable', restrict, function(req, res) {
         })
         return;
     }
-    if(!req.query.username) {
-        res.json({
-            success : false,
-            error_message : "username not set."
-        })
-        return;
-    }
-    sqlQueries.apiGetReqOffShareable(dbInfo, req.query.shar_id, req.query.username, function(err, shrble, trnsction) {
+    sqlQueries.apiGetReqOffShareable(dbInfo, req.query.shar_id, req.session.username, function(err, shrble, trnsction) {
         if(err) {
             res.json({
                 success : false,
@@ -272,7 +265,7 @@ app.get('/viewreqoffshareable', restrict, function(req, res) {
             })
             return;
         }
-        if(shrble.username == req.query.username) {
+        if(shrble.username == req.session.username) {
             res.json({shareable : shrble, transactions : trnsction});
         }
         else {
@@ -290,13 +283,6 @@ app.post('/makeshareablerequest', restrict, multer({ dest: __dirname+'/images/'}
         res.json({
             success : false,
             error_message : "shar_name not set."
-        })
-        return;
-    }
-    if(!req.body.username) {
-        res.json({
-            success : false,
-            error_message : "Username not set, this is for testing. Usually username will be obtained through session."
         })
         return;
     }
@@ -324,7 +310,7 @@ app.post('/makeshareablerequest', restrict, multer({ dest: __dirname+'/images/'}
         shar_pic_name: sharPicName
     };
     uploadingUser = {
-        username: req.body.username
+        username: req.session.username
     };
     sqlQueries.apiAddShareable(dbInfo, shareable, uploadingUser,  function(err, shareable, fields){
         if(err){
@@ -354,13 +340,7 @@ app.post('/makeshareableoffer', restrict, multer({ dest: __dirname+'/images/'}),
         })
         return;
     }
-    if(!req.body.username) {
-        res.json({
-            success : false,
-            error_message : "Username not set, this is for testing. Usually username will be obtained through session."
-        })
-        return;
-    }
+
     var shareableDescription;
     if(!req.body.description) {
         shareableDescription = "";
@@ -384,7 +364,7 @@ app.post('/makeshareableoffer', restrict, multer({ dest: __dirname+'/images/'}),
         shar_pic_name: sharPicName
     };
     uploadingUser = {
-        username: req.body.username
+        username: req.session.username
     };
     sqlQueries.apiAddShareable(dbInfo, shareable, uploadingUser,  function(err, shareable, fields){
         if(err){
@@ -453,8 +433,6 @@ app.get('/searchrequests', restrict, function(req, res){
   });
 
 });
-
-
 
 // ###############################
 // # Startup
