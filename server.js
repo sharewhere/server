@@ -17,7 +17,7 @@ var app = express();
 // ###############################
 app.use(bodyParser());
 app.use(cookieParser('shhhh, very secret'));
-app.use(session());
+app.use(session({ secret: 'shhhh, very secret', cookie: { maxAge: 60000 }}));
 
 // Session-persisted message middleware
 
