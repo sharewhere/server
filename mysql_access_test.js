@@ -28,6 +28,8 @@ var apiAddShareableTesting = false;
 var getReqOffTransMineTesting = false;
 var apiGetReqOffShareableTesting = false;
 var makeShareableDeletedTesting = false;
+var getSearchedOffersTesting = false;
+var getSearchedRequestsTesting = false;
 
 connection.connect();
 
@@ -253,9 +255,35 @@ if(makeShareableDeletedTesting){
 	var deleteID = 1;
 	console.log("Attempting to delete shareable with shar_id "+ deleteID +" in deleteSharableTesting.");
 	sql_queries.makeShareableDeleted(dbInfo, deleteID, function(err, rows){
-		if(err) throw err;
+		if(err) {
+			throw err; 
+			return;
+		}
 		console.log("%j", rows);
  	});
 }
 
+if(getSearchedOffersTesting){
+	var searchValue = "Plane";
+	console.log("Attempting to get all offered shareables with the name : " + searchValue);
+	sql_queries.getSearchedOffers(dbInfo, searchValue, function(err, rows){
+		if(err) {
+			throw err;
+			return;
+		}
+		console.log("%j", rows);
+	});
+}
+
+if(getSearchedRequestsTesting){
+	var searchValue = "Wig";
+	console.log("Attempting to get all requesting shareables with the name : " + searchValue);
+	sql_queries.getSearchedOffers(dbInfo, searchValue, function(err, rows){
+		if(err) {
+			throw err;
+			return;
+		}
+		console.log("%j", rows);
+	});
+}
 connection.end();

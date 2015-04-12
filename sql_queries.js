@@ -415,6 +415,26 @@ module.exports={
 			fn(err, rows);
 		});
 		conn.end();
+	},
+
+	getSearchedOffers: function(dbInfo, searchValue, fn){
+		queryString = "SELECT shareables.*, state_name, zip_code FROM shareables INNER JOIN users ON shareables.username = users.username INNER JOIN shareable_states ON shareables.state_id = shareable_states.state_id WHERE ((state_name = 'offering' OR state_name = 'offered_received_request') AND (shar_name LIKE '%"+searchValue+"%'  OR description LIKE '%"+searchValue+"%'))";
+		conn = mysql.createConnection(dbInfo);
+		conn.query(queryString, function(err, rows){
+			if(err) throw err;
+			fn(err, rows);
+		});
+		conn.end();
+	},
+
+	getSearchedRequests: function(dbInfo, searchValue, fn){
+		queryString = "SELECT shareables.*, state_name, zip_code FROM shareables INNER JOIN users ON shareables.username = users.username INNER JOIN shareable_states ON shareables.state_id = shareable_states.state_id WHERE ((state_name = 'requesting' OR state_name = 'requested_received_offer') AND (shar_name LIKE '%"+searchValue+"%'  OR description LIKE '%"+searchValue+"%'))";
+		conn = mysql.createConnection(dbInfo);
+		conn.query(queryString, function(err, rows){
+			if(err) throw err;
+			fn(err, rows);
+		});
+		conn.end();
 	}
 	
 };

@@ -413,6 +413,57 @@ app.get('/images', restrict, function(req,res) {
     res.sendfile(__dirname+'/images/'+req.query.image);
 });
 
+app.get('/searchoffers', restrict, function(req, res){
+  
+  if(!req.query.searchValue) {
+    res.json({
+      success : false,
+      error_message : "searchValue not set in /search. searchValue is the name of the shareables you are trying to retrieve."
+    })
+    return;
+  }
+  
+  sqlQueries.getSearchedOffers(dbInfo, req.query.searchValue, function(err, shareables){
+    if(err) {
+      res.json({
+        success : false,
+        error_message : err
+      })
+      return;
+    }
+    res.json({
+      success : true,
+      searchedShareables : shareables
+    })
+  });
+
+});
+
+app.get('/searchrequests', restrict, function(req, res){
+  
+  if(!req.query.searchValue) {
+    res.json({
+      success : false,
+      error_message : "searchValue not set in /search. searchValue is the name of the shareables you are trying to retrieve."
+    })
+    return;
+  }
+  
+  sqlQueries.getSearchedRequests(dbInfo, req.query.searchValue, function(err, shareables){
+    if(err) {
+      res.json({
+        success : false,
+        error_message : err
+      })
+      return;
+    }
+    res.json({
+      success : true,
+      searchedShareables : shareables
+    })
+  });
+
+});
 
 
 
