@@ -6,6 +6,7 @@ var session = require('express-session')
 var mysql = require('mysql');
 var sqlQueries = require('./sql_queries');
 var util = require('./util');
+var log = require('./log');
 var fs = require('fs');
 var multer  = require('multer')
 
@@ -30,7 +31,7 @@ app.use(function(req, res, next){
   if (msg) res.locals.message = '<p class="msg success">' + msg + '</p>';
 
   // IP and endpoint logging
-  console.log("[%s] %s", req.ip, req.url);
+  log.endpoint(req.ip, req.method, req.url);
 
   next();
 });
@@ -128,7 +129,7 @@ app.get('/cookiecheck', function(req, res) {
 
 //DEBUG
 app.get('/sessionInfo', restrict, function(req,res){
-   console.log(req.session.user);
+   log.info(req.session.user);
    res.send('you made it to sessionInfo');
 });
 
@@ -155,19 +156,19 @@ app.post('/login', function(req, res){
         // in the session store to be retrieved,
         // or in this case the entire user object
         req.session.user = user;
-        req.session.success = 'Authenticated as ' + user.name
+        req.session.success = 'Authenticated as ' + user.username
           + ' click to <a href="/logout">logout</a>. '
           + ' You may now access <a href="/restricted">/restricted</a>.';
         res.json({success : 'true' })
 
-        console.log("Auth success for %s", user);
+        log.success("Auth success for '%s'", user.username);
       });
     } else {
       req.session.error = 'Authentication failed, please check your '
         + ' username and password.';
       res.json({success : 'false'})
 
-      console.log("Auth failed for %s. Reason: %s", req.body.username, err);
+      log.fail("Auth failed for %s. %s", req.body.username, err);
     }
   });
 });
@@ -183,10 +184,10 @@ app.post('/register', function(req, res){
       email_address : req.body.email_address,
       zip_code : req.body.zip_code
     };
-    console.log("Attempting to add user: " + user.username)
+    log.info("Attempting to add user: " + user.username)
     sqlQueries.addUser(dbInfo, user, function(err, rows, fields){
         if(err){
-            console.log("Error trying to add user. " + err)
+            log.fail("Error trying to add user. " + err)
             res.json({success: 'false', errorMessage: 'User already exists'});
             return;
         }
@@ -195,7 +196,7 @@ app.post('/register', function(req, res){
             req.session.success = 'Authenticated as ' + user.username
             + ' click to <a href="/logout">logout</a>. '
             + ' You may now access <a href="/restricted">/restricted</a>.';
-            console.log("New user '%s'. Welcome!", user.username)
+            log.success("New user '%s'. Welcome!", user.username)
             res.json({success: 'true'})
             });
 
@@ -204,10 +205,10 @@ app.post('/register', function(req, res){
 });
 
 app.get('/browseoffers', restrict, function(req, res){
-    console.log("Attempting to get all offered Shareables");
+    log.info("Attempting to get all offered Shareables");
     sqlQueries.getAllOfferedShareables(dbInfo, function(err, offeredShareables){
         if(err){
-            console.log(err);
+            log.error(err);
             res.json({success : false, error_message : "error in browseoffers : "+err})
         }
         res.json({success : true, offers : offeredShareables})
@@ -215,10 +216,10 @@ app.get('/browseoffers', restrict, function(req, res){
 });
 
 app.get('/browserequests', restrict, function(req, res){
-    console.log("Attempting to get all reqested Shareables");
+    log.info("Attempting to get all reqested Shareables");
     sqlQueries.getAllRequestedShareables(dbInfo, function(err, requestedShareables){
         if(err){
-            console.log(err);
+            log.error(err);
             res.json({success : false, error_message : "error in browserequests : "+err})
         }
         res.json({success : true, requests : requestedShareables})
@@ -226,10 +227,10 @@ app.get('/browserequests', restrict, function(req, res){
 });
 
 app.get('/requests', restrict, function(req,res) {
-    console.log("Attempting to get all offer type shareables the user is involved with");
+    log.info("Attempting to get all offer type shareables the user is involved with");
     sqlQueries.getUsersRequests(dbInfo, req.query.username, function(err, usersRequests){
         if(err) {
-            console.log(err);
+            log.error(err);
             res.json({success : false, error_message : "error in requests : "+err})
         }
         res.json({userRequests : usersRequests});
@@ -237,10 +238,10 @@ app.get('/requests', restrict, function(req,res) {
 });
 
 app.get('/offers', restrict, function(req, res) {
-    console.log("Attempting to get all offer type shareables the user is involved with");
+    log.info("Attempting to get all offer type shareables the user is involved with");
     sqlQueries.getUsersOffers(dbInfo, req.query.username, function(err, usersOffers){
         if(err) {
-            console.log(err);
+            log.error(err);
             res.json({success : false, error_message : "error in offers : "+err})
         }
         res.json({userOffers : usersOffers});
@@ -282,7 +283,7 @@ app.get('/viewreqoffshareable', restrict, function(req, res) {
 app.post('/makeshareablerequest', restrict, multer({ dest: __dirname+'/images/'}), function(req, res) {
     //
     // debug code
-    console.log('Attempting to make a shareable request.');
+    log.info('Attempting to make a shareable request.');
     //
     if(!req.body.shar_name) {
         res.json({
@@ -343,7 +344,7 @@ app.post('/makeshareablerequest', restrict, multer({ dest: __dirname+'/images/'}
 app.post('/makeshareableoffer', restrict, multer({ dest: __dirname+'/images/'}), function(req, res) {
     //
     // debug code
-    console.log('Attempting to make a shareable request.');
+    log.info('Attempting to make a shareable request.');
     //
     if(!req.body.shar_name) {
         res.json({
@@ -422,4 +423,4 @@ util.printLogo()
 
 var portNumber = util.getSuitablePort();
 app.listen(portNumber);
-console.log('ShareWhere server started on port ' + portNumber);
+log.notice('ShareWhere server started on port ' + portNumber);
