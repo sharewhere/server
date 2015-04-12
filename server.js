@@ -251,14 +251,14 @@ app.get('/offers', restrict, function(req, res) {
 app.get('/viewreqoffshareable', restrict, function(req, res) {
     if(!req.query.shar_id) {
         res.json({
-            sucess : false,
+            success : false,
             error_message : "shar_id not set."
         })
         return;
     }
     if(!req.query.username) {
         res.json({
-            sucess : false,
+            success : false,
             error_message : "username not set."
         })
         return;
@@ -266,7 +266,7 @@ app.get('/viewreqoffshareable', restrict, function(req, res) {
     sqlQueries.apiGetReqOffShareable(dbInfo, req.query.shar_id, req.query.username, function(err, shrble, trnsction) {
         if(err) {
             res.json({
-                sucess : false,
+                success : false,
                 error_message : "Error getting the shareable info in apiGetReqOffShareable: "+err
             })
             return;
@@ -287,14 +287,14 @@ app.post('/makeshareablerequest', restrict, multer({ dest: __dirname+'/images/'}
     //
     if(!req.body.shar_name) {
         res.json({
-            sucess : false,
+            success : false,
             error_message : "shar_name not set."
         })
         return;
     }
     if(!req.body.username) {
         res.json({
-            sucess : false,
+            success : false,
             error_message : "Username not set, this is for testing. Usually username will be obtained through session."
         })
         return;
@@ -328,7 +328,7 @@ app.post('/makeshareablerequest', restrict, multer({ dest: __dirname+'/images/'}
     sqlQueries.apiAddShareable(dbInfo, shareable, uploadingUser,  function(err, shareable, fields){
         if(err){
             res.json({
-                sucess : false,
+                success : false,
                 error_message : "error in route makeshareablerequest: "+err
             })
             return;
@@ -348,14 +348,14 @@ app.post('/makeshareableoffer', restrict, multer({ dest: __dirname+'/images/'}),
     //
     if(!req.body.shar_name) {
         res.json({
-            sucess : false,
+            success : false,
             error_message : "shar_name not set."
         })
         return;
     }
     if(!req.body.username) {
         res.json({
-            sucess : false,
+            success : false,
             error_message : "Username not set, this is for testing. Usually username will be obtained through session."
         })
         return;
@@ -388,7 +388,7 @@ app.post('/makeshareableoffer', restrict, multer({ dest: __dirname+'/images/'}),
     sqlQueries.apiAddShareable(dbInfo, shareable, uploadingUser,  function(err, shareable, fields){
         if(err){
             res.json({
-                sucess : false,
+                success : false,
                 error_message : "error in route makeshareablerequest: "+err
             })
             return;
@@ -405,7 +405,7 @@ app.get('/images', restrict, function(req,res) {
     
     if(!req.query.image) {
         res.json({
-            sucess : false,
+            success : false,
             error_message : "image not set in images. image is the name of the image you are trying to retrieve, including extension."
         })
         return;
