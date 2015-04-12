@@ -434,6 +434,36 @@ app.get('/searchrequests', restrict, function(req, res){
 
 });
 
+<<<<<<< Updated upstream
+=======
+app.post('/completeshareable', restrict, function(req, res){
+  if(!req.body.transID){
+    res.json({
+      success : false,
+      error_message : "transID not set in /completeshareable. transID is the transaction ID of the transaction you are trying to complete."
+    })
+    return;
+  }
+
+sqlQueries.completeShareable(dbInfo, req.body.transID, function(err){
+  log.info("completed query for completing the shareable.");
+  if(err) {
+      res.json({
+        success : false,
+        error_message : err
+      })
+      return;
+  }
+  res.json({
+    success : true
+  })
+
+  });
+});
+
+
+
+>>>>>>> Stashed changes
 // ###############################
 // # Startup
 // ###############################
