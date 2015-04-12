@@ -18,6 +18,7 @@ var app = express();
 app.use(bodyParser());
 app.use(cookieParser('shhhh, very secret'));
 app.use(session({ secret: 'shhhh, very secret', cookie: { maxAge: 60000 }}));
+app.use('/images', express.static('images'));
 
 // Session-persisted message middleware
 
@@ -256,14 +257,7 @@ app.get('/viewreqoffshareable', restrict, function(req, res) {
         })
         return;
     }
-    if(!req.query.username) {
-        res.json({
-            success : false,
-            error_message : "username not set."
-        })
-        return;
-    }
-    sqlQueries.apiGetReqOffShareable(dbInfo, req.query.shar_id, req.query.username, function(err, shrble, trnsction) {
+    sqlQueries.apiGetReqOffShareable(dbInfo, req.query.shar_id, req.session.username, function(err, shrble, trnsction) {
         if(err) {
             res.json({
                 success : false,
@@ -271,7 +265,7 @@ app.get('/viewreqoffshareable', restrict, function(req, res) {
             })
             return;
         }
-        if(shrble.username == req.query.username) {
+        if(shrble.username == req.session.username) {
             res.json({shareable : shrble, transactions : trnsction});
         }
         else {
@@ -289,13 +283,6 @@ app.post('/makeshareablerequest', restrict, multer({ dest: __dirname+'/images/'}
         res.json({
             success : false,
             error_message : "shar_name not set."
-        })
-        return;
-    }
-    if(!req.body.username) {
-        res.json({
-            success : false,
-            error_message : "Username not set, this is for testing. Usually username will be obtained through session."
         })
         return;
     }
@@ -323,7 +310,7 @@ app.post('/makeshareablerequest', restrict, multer({ dest: __dirname+'/images/'}
         shar_pic_name: sharPicName
     };
     uploadingUser = {
-        username: req.body.username
+        username: req.session.username
     };
     sqlQueries.apiAddShareable(dbInfo, shareable, uploadingUser,  function(err, shareable, fields){
         if(err){
@@ -353,13 +340,7 @@ app.post('/makeshareableoffer', restrict, multer({ dest: __dirname+'/images/'}),
         })
         return;
     }
-    if(!req.body.username) {
-        res.json({
-            success : false,
-            error_message : "Username not set, this is for testing. Usually username will be obtained through session."
-        })
-        return;
-    }
+
     var shareableDescription;
     if(!req.body.description) {
         shareableDescription = "";
@@ -383,7 +364,7 @@ app.post('/makeshareableoffer', restrict, multer({ dest: __dirname+'/images/'}),
         shar_pic_name: sharPicName
     };
     uploadingUser = {
-        username: req.body.username
+        username: req.session.username
     };
     sqlQueries.apiAddShareable(dbInfo, shareable, uploadingUser,  function(err, shareable, fields){
         if(err){
@@ -399,18 +380,6 @@ app.post('/makeshareableoffer', restrict, multer({ dest: __dirname+'/images/'}),
         });
         return;
     });
-});
-
-app.get('/images', restrict, function(req,res) {
-    
-    if(!req.query.image) {
-        res.json({
-            success : false,
-            error_message : "image not set in images. image is the name of the image you are trying to retrieve, including extension."
-        })
-        return;
-    }
-    res.sendfile(__dirname+'/images/'+req.query.image);
 });
 
 app.get('/searchoffers', restrict, function(req, res){
@@ -465,7 +434,30 @@ app.get('/searchrequests', restrict, function(req, res){
 
 });
 
+app.post('/completeshareable', restrict, function(req, res){
+  if(!req.body.transID){
+    res.json({
+      success : false,
+      error_message : "transID not set in /completeshareable. transID is the transaction ID of the transaction you are trying to complete."
+    })
+    return;
+  }
 
+	sqlQueries.completeShareable(dbInfo, req.body.transID, function(err){
+	  log.info("completed query for completing the shareable.");
+	  if(err) {
+		  res.json({
+			success : false,
+			error_message : err
+		  })
+		  return;
+	  }
+	  res.json({
+		success : true
+	  })
+
+  });
+});
 
 // ###############################
 // # Startup
