@@ -35,7 +35,7 @@ use ShareWhereTest;
 create table ranks (
     rank_id         int auto_increment,
     rank_title      varchar(30) not null,
-	rank_threshold  int,
+    rank_threshold  int,
     primary key (rank_id)
 );
 
@@ -80,10 +80,13 @@ create table transaction_types (
 );
 
 create table transactions (
+    trans_id       int not null auto_increment,
 	lender         varchar(30) not null,
 	borrower       varchar(30) not null,
 	shar_id        int not null,
-    type_id        int not null
+    type_id        int not null,
+    primary key (trans_id),
+    foreign key (type_id) references transaction_types(type_id)
 );
 
 create table sessions (
