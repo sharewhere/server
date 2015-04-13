@@ -61,7 +61,6 @@ module.exports={
 				queryString = queryString +"', '"+user.zip_code;
 			}
 			queryString = queryString +"');";
-			console.log("addUser queryString: "+queryString);
 			
 			conn = mysql.createConnection(dbInfo);
 			conn.query(queryString, function(err, rows, fields){
@@ -443,7 +442,7 @@ module.exports={
 
 	completeShareable: function(dbInfo, transID, fn){
 
-		console.log("transID : "+transID);
+		//console.log("transID : "+transID);
 		queryString1 = "update users set points = points+1 where username = (select point_recipient from ((select lender as point_recipient from transactions b where trans_id = '"+transID+"') UNION (select borrower as point_recipient from transactions c where trans_id = '"+transID+"')) lender_borrower_union WHERE point_recipient != (select sh.username from shareables sh inner join transactions tr on sh.shar_id = tr.shar_id WHERE tr.trans_id = '"+transID+"'));";
 		queryString2 = "update transactions set type_id = (select type_id from transaction_types where type_name = 'completed') WHERE trans_id = '"+transID+"';";
 		queryString3 = "DELETE FROM transactions WHERE shar_id = (select shar_id from (select tr.shar_id from transactions tr where tr.trans_id = '"+transID+"') as temp_table) AND type_id = (select type_id from transaction_types where type_name = 'request/offer');";
