@@ -258,7 +258,7 @@ app.get('/viewreqoffshareable', restrict, function(req, res) {
         })
         return;
     }
-    sqlQueries.apiGetReqOffShareable(dbInfo, req.query.shar_id, req.session.username, function(err, shrble, trnsction) {
+    sqlQueries.apiGetReqOffShareable(dbInfo, req.query.shar_id, req.session.user.username, function(err, shrble, trnsction) {
         if(err) {
             res.json({
                 success : false,
@@ -266,7 +266,7 @@ app.get('/viewreqoffshareable', restrict, function(req, res) {
             })
             return;
         }
-        if(shrble.username == req.session.username) {
+        if(shrble.username == req.session.user.username) {
             res.json({shareable : shrble, transactions : trnsction});
         }
         else {
@@ -311,7 +311,7 @@ app.post('/makeshareablerequest', restrict, multer({ dest: __dirname+'/images/'}
         shar_pic_name: sharPicName
     };
     uploadingUser = {
-        username: req.session.username
+        username: req.session.user.username
     };
     sqlQueries.apiAddShareable(dbInfo, shareable, uploadingUser,  function(err, shareable, fields){
         if(err){
@@ -365,7 +365,7 @@ app.post('/makeshareableoffer', restrict, multer({ dest: __dirname+'/images/'}),
         shar_pic_name: sharPicName
     };
     uploadingUser = {
-        username: req.session.username
+        username: req.session.user.username
     };
     sqlQueries.apiAddShareable(dbInfo, shareable, uploadingUser,  function(err, shareable, fields){
         if(err){
