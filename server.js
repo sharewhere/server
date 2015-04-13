@@ -17,7 +17,8 @@ var app = express();
 // ###############################
 app.use(bodyParser());
 app.use(cookieParser('shhhh, very secret'));
-app.use(session({ secret: 'shhhh, very secret', cookie: { maxAge: 60000 }}));
+// 7 days until cookie expiration
+app.use(session({ secret: 'shhhh, very secret', cookie: { maxAge: 604800000 }}));
 app.use('/images', express.static('images'));
 
 // Session-persisted message middleware
