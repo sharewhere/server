@@ -19,10 +19,8 @@ app.use(bodyParser());
 app.use(cookieParser('shhhh, very secret'));
 // 7 days until cookie expiration
 app.use(session({ secret: 'shhhh, very secret', cookie: { maxAge: 604800000 }}));
-app.use('/images', express.static('images'));
 
-// Session-persisted message middleware
-
+// Endpoint logging and generic errors
 app.use(function(req, res, next){
   var err = req.session.error
     , msg = req.session.success;
@@ -37,6 +35,8 @@ app.use(function(req, res, next){
 
   next();
 });
+
+app.use('/images', express.static('images'));
 
 //sql connection info
 var dbInfo = {
@@ -108,6 +108,7 @@ function restrict(req, res, next) {
   if (req.session.user) {
     next();
   } else {
+    log.fail("Access denied due to not being logged in");
     req.session.error = 'Access denied!';
     res.json({error_message: "Access denied!", cookieValid : false});
   }
