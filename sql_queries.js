@@ -109,14 +109,9 @@ module.exports={
 			throw new Error("no username set in getUserShareables");
 		}
 		
-		var queryString = "select distinct \
-							shareables.shar_id, username, shar_name, description, state_name, creation_date, b.responses\
-							from shareables \
-							left outer join ( select shar_id, lender, borrower, count(borrower) as responses from transactions group by transactions.shar_id) as b\
-							on b.shar_id=shareables.shar_id \
-							inner join shareable_states \
-							on shareables.state_id = shareable_states.state_id \
-							where shareables.state_id in (select state_id from shareable_states where (shareables.username = '"+username+"' and(state_name = 'requesting' or state_name='requested_received_offer')) or (state_name = 'offered_received_request' and b.borrower = '"+username+"'));";
+		var queryString = "select distinct shareables.shar_id, username, shar_name, description, state_name, creation_date, b.responses from shareables left outer join ( select shar_id, lender, borrower, count(borrower) as responses from transactions group by transactions.shar_id)"+
+		"as b on b.shar_id=shareables.shar_id inner join shareable_states on shareables.state_id = shareable_states.state_id where shareables.state_id in (select state_id from shareable_states where (shareables.username = '"+username+"' and(state_name = 'requesting' or state_name='requested_received_offer'))"+
+		"or (state_name = 'offered_received_request' and b.borrower = '"+username+"'));";
 		conn = mysql.createConnection(dbInfo);
 		conn.query(queryString, function(err, rows, fields){
 			fn(err, rows);
@@ -128,14 +123,9 @@ module.exports={
 		if(!username){
 			throw new Error("no username set in getUserShareables");
 		}
-		var queryString = "select distinct \
-							shareables.shar_id, username, shar_name, description, state_name, creation_date, b.responses \
-							from shareables \
-							left outer join ( select shar_id, lender, borrower, count(borrower) as responses from transactions group by transactions.shar_id) as b \
-							on b.shar_id=shareables.shar_id \
-							inner join shareable_states \
-							on shareables.state_id = shareable_states.state_id \
-							where shareables.state_id in (select state_id from shareable_states where (shareables.username = '"+username+"' and(state_name = 'offering' or state_name='offered_received_request')) or (state_name = 'requested_received_offer' and b.lender = '"+username+"'));";
+		var queryString = "select distinct shareables.shar_id, username, shar_name, description, state_name, creation_date, b.responses from shareables left outer join ( select shar_id, lender, borrower, count(borrower) as responses from transactions group by transactions.shar_id)"+
+		"as b on b.shar_id=shareables.shar_id inner join shareable_states on shareables.state_id = shareable_states.state_id where shareables.state_id in (select state_id from shareable_states where (shareables.username = '"+username+"' and(state_name = 'offering' or state_name='offered_received_request'))"+
+		"or (state_name = 'requested_received_offer' and b.lender = '"+username+"'));";
 		conn = mysql.createConnection(dbInfo);
 		conn.query(queryString, function(err, rows, fields){
 			fn(err, rows);
@@ -201,9 +191,7 @@ module.exports={
 		if(!shar_id){
 			throw new Error("No shar_id set in getShareable");
 		}
-		var queryString = "select shareables.*, shareable_states.state_name, zip_code from shareables inner join shareable_states on \
-		shareables.state_id = shareable_states.state_id inner join users \
-		on shareables.username = users.username where shar_id ='"+shar_id+"';";
+		var queryString = "select shareables.*, shareable_states.state_name, zip_code from shareables inner join shareable_states on shareables.state_id = shareable_states.state_id inner join users on shareables.username = users.username where shar_id ='"+shar_id+"';";
 		
 		conn = mysql.createConnection(dbInfo);
 		conn.query(queryString, function(err, rows, fields){
