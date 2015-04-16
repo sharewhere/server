@@ -156,8 +156,11 @@ module.exports={
 		if(!shareable.description){
 			shareable.description = '';
 		}
-        if(shareable.shar_pic_name != null){
+        if(shareable.hasOwnProperty('shar_pic_name') && shareable.shar_pic_name != null){
            shareable.shar_pic_name = "'"+shareable.shar_pic_name+"'"; 
+        }
+        else{
+           shareable.shar_pic_name = "null";
         }
 		queryString = "insert into shareables(shar_name, description, username, state_id, shar_pic_name) VALUES ('";
 		queryString = queryString + shareable.shar_name +"', '"+shareable.description+"','"+user.username
