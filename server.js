@@ -111,6 +111,7 @@ function restrict(req, res, next) {
     log.fail("Access denied due to not being logged in");
     req.session.error = 'Access denied!';
     res.json({error_message: "Access denied!", cookieValid : false});
+    return;
   }
 }
 
@@ -148,7 +149,7 @@ app.get('/login', function(req, res){
   res.send('login');
 });
 
-//The username is stored in the session. It is accessible by res.session.user.name
+//The username is stored in the session. It is accessible by res.session.user.username
 app.post('/login', function(req, res){
   authenticate(req.body.username, req.body.password, function(err, user){
     if (user) {
@@ -223,7 +224,7 @@ app.get('/browserequests', restrict, function(req, res){
     sqlQueries.getAllRequestedShareables(dbInfo, function(err, requestedShareables){
         if(err){
             log.error(err);
-            res.json({success : false, error_message : "error in browserequests : "+err})
+            res.json({success : false, error_message : ("error in browserequests : "+err)});
         }
         res.json({success : true, requests : requestedShareables})
     });
@@ -231,23 +232,23 @@ app.get('/browserequests', restrict, function(req, res){
 
 app.get('/requests', restrict, function(req,res) {
     log.info("Attempting to get all offer type shareables the user is involved with");
-    sqlQueries.getUsersRequests(dbInfo, req.query.username, function(err, usersRequests){
+    sqlQueries.getUsersRequests(dbInfo, req.session.user.username, function(err, usersRequests){
         if(err) {
             log.error(err);
             res.json({success : false, error_message : "error in requests : "+err})
         }
-        res.json({userRequests : usersRequests});
+        res.json({success: true, requests : usersRequests});
     });
 });
 
 app.get('/offers', restrict, function(req, res) {
     log.info("Attempting to get all offer type shareables the user is involved with");
-    sqlQueries.getUsersOffers(dbInfo, req.query.username, function(err, usersOffers){
+    sqlQueries.getUsersOffers(dbInfo, req.session.user.username, function(err, usersOffers){
         if(err) {
             log.error(err);
             res.json({success : false, error_message : "error in offers : "+err})
         }
-        res.json({userOffers : usersOffers});
+        res.json({success: true, offers : usersOffers});
     });
 });
 
@@ -276,7 +277,7 @@ app.get('/viewreqoffshareable', restrict, function(req, res) {
     });
 });
 
-app.post('/makeshareablerequest', restrict, multer({ dest: __dirname+'/images/'}), function(req, res) {
+app.post('/makeshareablerequest', multer({ dest: __dirname+'/images/'}), restrict, function(req, res) {
     //
     // debug code
     log.info('Attempting to make a shareable request.');
@@ -330,7 +331,7 @@ app.post('/makeshareablerequest', restrict, multer({ dest: __dirname+'/images/'}
     });
 });
 
-app.post('/makeshareableoffer', restrict, multer({ dest: __dirname+'/images/'}), function(req, res) {
+app.post('/makeshareableoffer', multer({ dest: __dirname+'/images/'}), restrict, function(req, res) {
     //
     // debug code
     log.info('Attempting to make a shareable request.');

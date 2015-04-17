@@ -3,13 +3,13 @@ var mysql = require('mysql');
 
 getEntityByPrimaryKey = function(dbInfo, entityTable, primaryKey, primaryValue, fn){
 	if(!primaryValue){
-		throw new Error("No primaryValue set in getEntityByPrimaryKey");
+		fn(new Error("No primaryValue set in getEntityByPrimaryKey"));
 	}
 	var queryString = "select * from "+entityTable+" where "+primaryKey+" ='"+primaryValue+"';";
 	
-	conn = mysql.createConnection(dbInfo);
+	var conn = mysql.createConnection(dbInfo);
 	conn.query(queryString, function(err, rows, fields){
-		if (err) throw err;
+		if (err) fn(err);
 		if(rows.length <1){
 			fn(new Error('cannot find entity in: '+entityTable));
 		}
@@ -21,12 +21,12 @@ getEntityByPrimaryKey = function(dbInfo, entityTable, primaryKey, primaryValue, 
 //removeEntityByPrimaryKey(dbInfo, "shareables", "shar_id", shar_id, function(err, user)
 removeEntityByPrimaryKey = function(dbInfo, entityTable, primaryKey, primaryValue, fn){
 	if(!primaryValue){
-		throw new Error("No primaryValue set in removeEntityByPrimaryKey.");
+		fn(new Error("No primaryValue set in removeEntityByPrimaryKey."));
 	}
 	var queryString = "delete from "+entityTable+" where "+primaryKey+" ="+primaryValue+";";
-	conn = mysql.createConnection(dbInfo);
+	var conn = mysql.createConnection(dbInfo);
 	conn.query(queryString, function(err){
-		if (err) throw err;
+		if (err) fn(err);
 	});
 	conn.end();
 }
@@ -37,17 +37,17 @@ module.exports={
 	addUser: function(dbInfo, user, fn)
 	{
 		if(!user.username){
-			throw new Error("no username set in addUser");
+			fn(new Error("no username set in addUser"));
 		}
 		if(!user.password){
-			throw new Error("no password set in addUser");
+			fn(new Error("no password set in addUser"));
 		}
 		if(!user.email_address){
-			throw new Error("no email address set in addUser");
+			fn(new Error("no email address set in addUser"));
 		}
 		
 		hash(user.password, '12345678901234567890', function(err, hash){
-			if(err) throw(err);
+			if(err) fn(err);
 			user.salt = '12345678901234567890';
 			user.hash_code = hash.toString('hex');
 			
@@ -62,7 +62,7 @@ module.exports={
 			}
 			queryString = queryString +"');";
 			
-			conn = mysql.createConnection(dbInfo);
+			var conn = mysql.createConnection(dbInfo);
 			conn.query(queryString, function(err, rows, fields){
 				fn(err, rows, fields);
 			});
@@ -72,11 +72,11 @@ module.exports={
 	
 	removeUser: function(dbInfo, username, fn){
 		if(!username){
-			throw new Error("no username set in removeUser");
+			fn(new Error("no username set in removeUser"));
 		}
 		queryString = "delete from users where username = '"+username+"';";
 		
-		conn = mysql.createConnection(dbInfo);
+		var conn= mysql.createConnection(dbInfo);
 		conn.query(queryString, function(err, rows, fields){
 			fn(err, rows, fields);
 		});
@@ -93,11 +93,11 @@ module.exports={
 	//have a callback function: function(err, shareables) 
 	getUsersShareables: function(dbInfo, username, fn){
 		if(!username){
-			throw new Error("no username set in getUserShareables");
+			fn(new Error("no username set in getUserShareables"));
 		}
 		queryString = "select * from shareables where username = '"+username+"';";
 		
-		conn = mysql.createConnection(dbInfo);
+		var conn= mysql.createConnection(dbInfo);
 		conn.query(queryString, function(err, rows, fields){
 			fn(err, rows, fields);
 		});
@@ -106,27 +106,27 @@ module.exports={
 	
 	getUsersRequests: function(dbInfo, username, fn){
 		if(!username){
-			throw new Error("no username set in getUserShareables");
+			fn(new Error("no username set in getUserShareables"));
 		}
 		
 		var queryString = "select distinct shareables.shar_id, username, shar_name, description, state_name, creation_date, b.responses from shareables left outer join ( select shar_id, lender, borrower, count(borrower) as responses from transactions group by transactions.shar_id)"+
 		"as b on b.shar_id=shareables.shar_id inner join shareable_states on shareables.state_id = shareable_states.state_id where shareables.state_id in (select state_id from shareable_states where (shareables.username = '"+username+"' and(state_name = 'requesting' or state_name='requested_received_offer'))"+
 		"or (state_name = 'offered_received_request' and b.borrower = '"+username+"'));";
-		conn = mysql.createConnection(dbInfo);
+		var conn= mysql.createConnection(dbInfo);
 		conn.query(queryString, function(err, rows, fields){
-			fn(err, rows);
+            fn(err, rows);
 		});
-		conn.end();
+        conn.end();
 	},
 
 	getUsersOffers: function(dbInfo, username, fn){
 		if(!username){
-			throw new Error("no username set in getUserShareables");
+			fn(new Error("no username set in getUserShareables"));
 		}
 		var queryString = "select distinct shareables.shar_id, username, shar_name, description, state_name, creation_date, b.responses from shareables left outer join ( select shar_id, lender, borrower, count(borrower) as responses from transactions group by transactions.shar_id)"+
 		"as b on b.shar_id=shareables.shar_id inner join shareable_states on shareables.state_id = shareable_states.state_id where shareables.state_id in (select state_id from shareable_states where (shareables.username = '"+username+"' and(state_name = 'offering' or state_name='offered_received_request'))"+
 		"or (state_name = 'requested_received_offer' and b.lender = '"+username+"'));";
-		conn = mysql.createConnection(dbInfo);
+		var conn= mysql.createConnection(dbInfo);
 		conn.query(queryString, function(err, rows, fields){
 			fn(err, rows);
 		});
@@ -162,11 +162,11 @@ module.exports={
         else{
            shareable.shar_pic_name = "null";
         }
-		queryString = "insert into shareables(shar_name, description, username, state_id, shar_pic_name) VALUES ('";
+		var queryString = "insert into shareables(shar_name, description, username, state_id, shar_pic_name) VALUES ('";
 		queryString = queryString + shareable.shar_name +"', '"+shareable.description+"','"+user.username
 			+"',(select state_id from shareable_states where state_name = '"+shareable.state_name+"'), "+shareable.shar_pic_name+");";
 		
-		conn = mysql.createConnection(dbInfo);
+		var conn= mysql.createConnection(dbInfo);
 		conn.query(queryString, function(err, rows, fields){
 			fn(err, rows, fields);
 		});
@@ -192,13 +192,13 @@ module.exports={
 	//Can't use getEntityByPrimaryKey because it needs to join on shareable_state
 	getShareable: function(dbInfo, shar_id, fn){
 		if(!shar_id){
-			throw new Error("No shar_id set in getShareable");
+			fn(new Error("No shar_id set in getShareable"));
 		}
 		var queryString = "select shareables.*, shareable_states.state_name, zip_code from shareables inner join shareable_states on shareables.state_id = shareable_states.state_id inner join users on shareables.username = users.username where shar_id ='"+shar_id+"';";
 		
-		conn = mysql.createConnection(dbInfo);
+		var conn= mysql.createConnection(dbInfo);
 		conn.query(queryString, function(err, rows, fields){
-			if (err) throw err;
+			if (err) fn(err);
 			if(rows.length <1){
 				fn(new Error("cannot find shareable"));
 			}
@@ -216,7 +216,7 @@ module.exports={
 		
 		var queryString = "select * from transactions where transactions.shar_id = '"+shar_id+"';";
 		
-		conn = mysql.createConnection(dbInfo);
+		var conn= mysql.createConnection(dbInfo);
 		conn.query(queryString, function(err, rows, fields){
 			if (err) {
 				fn(err);
@@ -239,7 +239,7 @@ module.exports={
 		}
 		var queryString = "select * from transactions where shar_id = '"+shar_id+"' and (lender = '"+username+"' or borrower = '"+username+"');";
 		
-		conn = mysql.createConnection(dbInfo);
+		var conn= mysql.createConnection(dbInfo);
 		conn.query(queryString, function(err, row, fields){
 			if (err) {
 				fn(err);
@@ -297,18 +297,18 @@ module.exports={
 		//Between the user requesting, the user offering, and the shareable
 		//This is a transaction of type offer
 		if(!shar_id){
-			throw new Error("Shareable doesn't have shar_id set in offerOnRequest");
+			fn(new Error("Shareable doesn't have shar_id set in offerOnRequest"));
 		}
 		module.exports.getShareable(dbInfo, shar_id, function(err, shareable){
 			if(err){
-				throw err;
+				fn(err);
 			}
 			var allowableStates = ["requesting", "requested_received_offer"];
 			if(!(allowableStates.indexOf(shareable.state_name) > -1)){
 				//Shareable is not in proper state for offering.
-				throw new Error("Shareable can't be offered in this state");
+				fn(new Error("Shareable can't be offered in this state"));
 			}
-			queryString = "UPDATE shareables SET state_id = \
+			var queryString= "UPDATE shareables SET state_id = \
 			(select state_id from shareable_states where state_name = 'requested_received_offer') where shar_id = '"
 			+shar_id+"'; \
 			INSERT INTO transactions \
@@ -316,7 +316,7 @@ module.exports={
 			values \
 				('"+username+"', (select username from shareables where shar_id = "+shar_id+"), '"+shar_id+"', (select type_id from transaction_types where type_name = 'request/offer'));";
 			
-			conn = mysql.createConnection(dbInfo);
+			var conn= mysql.createConnection(dbInfo);
 			conn.query(queryString, function(err, rows, fields){
 				if (err) throw err;
 			});
@@ -327,17 +327,17 @@ module.exports={
 	//TODO whenever this is done it should also insert a row into the transactions table to log the request.
 	requestOnOffer: function(dbInfo, shar_id, username){
 		if(!shar_id){
-			throw new Error("Shareable doesn't have shar_id set in requestOnOffer");
+			fn(new Error("Shareable doesn't have shar_id set in requestOnOffer"));
 		}
 		module.exports.getShareable(dbInfo, shar_id, function(err, shareable){
 			if(err){
-				throw err;
+				fn(err);
 			}
 			var allowableStates = ["offering", "offered_received_request"];
 			if(!(allowableStates.indexOf(shareable.state_name) > -1)){
-				throw new Error("shareable can't be requested in this state.");
+				fn(new Error("shareable can't be requested in this state."));
 			}
-			queryString = "UPDATE shareables SET state_id = "+
+			var queryString= "UPDATE shareables SET state_id = "+
 			"(select state_id from shareable_states where state_name = 'offered_received_request') where shar_id = '"
 			+shar_id+"'; \
 			INSERT INTO transactions \
@@ -345,9 +345,9 @@ module.exports={
 			values \
 				((select username from shareables where shar_id = "+shar_id+"), '"+username+"', '"+shar_id+"', (select type_id from transaction_types where type_name = 'request/offer'));";
 
-			conn = mysql.createConnection(dbInfo);
+			var conn= mysql.createConnection(dbInfo);
 			conn.query(queryString, function(err, rows, fields){
-				if (err) throw err;
+				if (err) fn(err);
 			});
 			conn.end();
 		});
@@ -363,11 +363,11 @@ module.exports={
 			if(!(allowableStates.indexOf(shareable.state_name) > -1)){
 				throw new Error("shareable can't be offered in this state.");
 			}
-			queryString = "UPDATE shareables SET state_id = "+
+			var queryString = "UPDATE shareables SET state_id = "+
 			"(select state_id from shareable_states where state_name = 'hidden') where shar_id = '"
 			+shar_id+"';";
 
-			conn = mysql.createConnection(dbInfo);
+			var conn= mysql.createConnection(dbInfo);
 			conn.query(queryString, function(err, rows, fields){
 				if (err) throw err;
 			});
@@ -376,20 +376,20 @@ module.exports={
 	},
 
 	getAllOfferedShareables: function(dbInfo, fn){
-		queryString = "SELECT shareables.*, state_name, zip_code from shareables inner join shareable_states on shareables.state_id = shareable_states.state_id inner join users on shareables.username = users.username where state_name = 'offering' or state_name = 'offered_received_request'";
-		conn = mysql.createConnection(dbInfo);
+		var queryString = "SELECT shareables.*, state_name, zip_code from shareables inner join shareable_states on shareables.state_id = shareable_states.state_id inner join users on shareables.username = users.username where state_name = 'offering' or state_name = 'offered_received_request'";
+		var conn= mysql.createConnection(dbInfo);
 		conn.query(queryString, function(err, rows, fields){
-			if(err) throw err;
+			if(err) fn(err);
 			fn(err, rows);
 		});
 		conn.end();
 	},
 
 	getAllRequestedShareables: function(dbInfo, fn){
-		queryString = "SELECT shareables.*, state_name, zip_code from shareables inner join shareable_states on shareables.state_id = shareable_states.state_id inner join users on shareables.username = users.username where state_name = 'requesting' or state_name = 'requested_received_offer'";
-		conn = mysql.createConnection(dbInfo);
+		var queryString = "SELECT shareables.*, state_name, zip_code from shareables inner join shareable_states on shareables.state_id = shareable_states.state_id inner join users on shareables.username = users.username where state_name = 'requesting' or state_name = 'requested_received_offer'";
+		var conn= mysql.createConnection(dbInfo);
 		conn.query(queryString, function(err, rows, field){
-			if(err) throw err;
+			if(err) fn(err);
 			fn(err, rows);
 		});
 		conn.end();
@@ -397,31 +397,31 @@ module.exports={
 
 
 	makeShareableDeleted: function(dbInfo, shar_id, fn){
-		queryString = "UPDATE shareables SET state_id = "+
+		var queryString = "UPDATE shareables SET state_id = "+
 		"(select state_id from shareable_states where state_name = 'deleted') WHERE shar_id = '"+shar_id+"';";
-		conn = mysql.createConnection(dbInfo);
+		var conn= mysql.createConnection(dbInfo);
 		conn.query(queryString, function(err, rows){
-			if(err) throw err;
+			if(err) fn(err);
 			fn(err, rows);
 		});
 		conn.end();
 	}, 
 
 	getSearchedOffers: function(dbInfo, searchValue, fn){
-		queryString = "SELECT shareables.*, state_name, zip_code FROM shareables INNER JOIN users ON shareables.username = users.username INNER JOIN shareable_states ON shareables.state_id = shareable_states.state_id WHERE ((state_name = 'offering' OR state_name = 'offered_received_request') AND (shar_name LIKE '%"+searchValue+"%'  OR description LIKE '%"+searchValue+"%'))";
-		conn = mysql.createConnection(dbInfo);
+		var queryString = "SELECT shareables.*, state_name, zip_code FROM shareables INNER JOIN users ON shareables.username = users.username INNER JOIN shareable_states ON shareables.state_id = shareable_states.state_id WHERE ((state_name = 'offering' OR state_name = 'offered_received_request') AND (shar_name LIKE '%"+searchValue+"%'  OR description LIKE '%"+searchValue+"%'))";
+		var conn= mysql.createConnection(dbInfo);
 		conn.query(queryString, function(err, rows){
-			if(err) throw err;
+			if(err) fn(err);
 			fn(err, rows);
 		});
 		conn.end();
 	},
 
 	getSearchedRequests: function(dbInfo, searchValue, fn){
-		queryString = "SELECT shareables.*, state_name, zip_code FROM shareables INNER JOIN users ON shareables.username = users.username INNER JOIN shareable_states ON shareables.state_id = shareable_states.state_id WHERE ((state_name = 'requesting' OR state_name = 'requested_received_offer') AND (shar_name LIKE '%"+searchValue+"%'  OR description LIKE '%"+searchValue+"%'))";
-		conn = mysql.createConnection(dbInfo);
+		var queryString = "SELECT shareables.*, state_name, zip_code FROM shareables INNER JOIN users ON shareables.username = users.username INNER JOIN shareable_states ON shareables.state_id = shareable_states.state_id WHERE ((state_name = 'requesting' OR state_name = 'requested_received_offer') AND (shar_name LIKE '%"+searchValue+"%'  OR description LIKE '%"+searchValue+"%'))";
+		var conn= mysql.createConnection(dbInfo);
 		conn.query(queryString, function(err, rows){
-			if(err) throw err;
+			if(err) fn(err);
 			fn(err, rows);
 		});
 		conn.end();
@@ -434,12 +434,12 @@ module.exports={
 	completeShareable: function(dbInfo, transID, fn){
 
 		//console.log("transID : "+transID);
-		queryString1 = "update users set points = points+1 where username = (select point_recipient from ((select lender as point_recipient from transactions b where trans_id = '"+transID+"') UNION (select borrower as point_recipient from transactions c where trans_id = '"+transID+"')) lender_borrower_union WHERE point_recipient != (select sh.username from shareables sh inner join transactions tr on sh.shar_id = tr.shar_id WHERE tr.trans_id = '"+transID+"'));";
-		queryString2 = "update transactions set type_id = (select type_id from transaction_types where type_name = 'completed') WHERE trans_id = '"+transID+"';";
-		queryString3 = "DELETE FROM transactions WHERE shar_id = (select shar_id from (select tr.shar_id from transactions tr where tr.trans_id = '"+transID+"') as temp_table) AND type_id = (select type_id from transaction_types where type_name = 'request/offer');";
-		queryString4 = "update shareables set state_id = (select state_id from shareable_states where state_name = 'hidden') WHERE shar_id = (select shar_id from transactions where trans_id = '"+transID+"');";
+		var queryString1 = "update users set points = points+1 where username = (select point_recipient from ((select lender as point_recipient from transactions b where trans_id = '"+transID+"') UNION (select borrower as point_recipient from transactions c where trans_id = '"+transID+"')) lender_borrower_union WHERE point_recipient != (select sh.username from shareables sh inner join transactions tr on sh.shar_id = tr.shar_id WHERE tr.trans_id = '"+transID+"'));";
+		var queryString2 = "update transactions set type_id = (select type_id from transaction_types where type_name = 'completed') WHERE trans_id = '"+transID+"';";
+		var queryString3 = "DELETE FROM transactions WHERE shar_id = (select shar_id from (select tr.shar_id from transactions tr where tr.trans_id = '"+transID+"') as temp_table) AND type_id = (select type_id from transaction_types where type_name = 'request/offer');";
+		var queryString4 = "update shareables set state_id = (select state_id from shareable_states where state_name = 'hidden') WHERE shar_id = (select shar_id from transactions where trans_id = '"+transID+"');";
 
-		conn = mysql.createConnection(dbInfo);
+		var conn= mysql.createConnection(dbInfo);
 		conn.query(queryString1, function(err){
 			if(err)
 				fn(err);
