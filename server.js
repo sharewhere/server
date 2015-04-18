@@ -525,6 +525,7 @@ app.post('/offeronrequest', restrict, function(req, res){
            success : false,
            error_message : "shar_id not set in route offeronrequest. shar_id must be the shareable that is being requested."
         });
+        return;
     }
     
     sqlQueries.offerOnRequest(dbInfo, req.body.shar_id, req.session.user.username, function(err, rows, fields){
@@ -533,6 +534,7 @@ app.post('/offeronrequest', restrict, function(req, res){
                 success : false,
                 error_message : err
             })
+            return;
         }
         res.json({
             success : true
@@ -546,6 +548,7 @@ app.post('/requestonoffer', restrict, function(req, res){
            success : false,
            error_message : "shar_id not set in route requestonoffer. shar_id must be the shareable that is being offered."
         });
+        return;
     }
     
     sqlQueries.requestOnOffer(dbInfo, req.body.shar_id, req.session.user.username, function(err, rows, fields){
@@ -554,6 +557,7 @@ app.post('/requestonoffer', restrict, function(req, res){
                 success : false,
                 error_message : err
             })
+            return;
         }
         res.json({
             success : true
