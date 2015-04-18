@@ -320,6 +320,20 @@ app.post('/makeshareablerequest', multer({ dest: __dirname+'/images/'}), restric
     else {
         shareableDescription = req.body.description;
     }
+    var shareableStartDate
+    if(!req.body.start_date){
+        shareableStartDate = null
+    }
+    else{
+        shareableStartDate = req.body.start_date;
+    }
+    var shareableEndDate
+    if(!req.body.end_date){
+        shareableEndDate = null
+    }
+    else{
+        shareableEndDate = req.body.end_date;
+    }
     
     var sharPicName;
     if(!req.files.picture){
@@ -333,7 +347,9 @@ app.post('/makeshareablerequest', multer({ dest: __dirname+'/images/'}), restric
         shar_name: req.body.shar_name,
         state_name: "requesting",
         description: shareableDescription,
-        shar_pic_name: sharPicName
+        shar_pic_name: sharPicName,
+        start_date: shareableStartDate,
+        end_date: shareableEndDate
     };
     uploadingUser = {
         username: req.session.user.username
@@ -374,6 +390,20 @@ app.post('/makeshareableoffer', multer({ dest: __dirname+'/images/'}), restrict,
     else {
         shareableDescription = req.body.description;
     }
+    var shareableStartDate
+    if(!req.body.start_date){
+        shareableStartDate = null
+    }
+    else{
+        shareableStartDate = req.body.start_date;
+    }
+    var shareableEndDate
+    if(!req.body.end_date){
+        shareableEndDate = null
+    }
+    else{
+        shareableEndDate = req.body.end_date;
+    }
     
     var sharPicName;
     if(!req.files.picture){
@@ -387,7 +417,10 @@ app.post('/makeshareableoffer', multer({ dest: __dirname+'/images/'}), restrict,
         shar_name: req.body.shar_name,
         state_name: "offering",
         description: shareableDescription,
-        shar_pic_name: sharPicName
+        shar_pic_name: sharPicName,
+        start_date: shareableStartDate,
+        end_date: shareableEndDate
+        
     };
     uploadingUser = {
         username: req.session.user.username

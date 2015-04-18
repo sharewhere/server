@@ -162,9 +162,21 @@ module.exports={
         else{
            shareable.shar_pic_name = "null";
         }
-		var queryString = "insert into shareables(shar_name, description, username, state_id, shar_pic_name) VALUES ('";
+        if(shareable.hasOwnProperty('start_date') && shareable.start_date != null){
+           shareable.start_date = "'"+shareable.start_date+"'"; 
+        }
+        else{
+           shareable.start_date = "null";
+        }
+        if(shareable.hasOwnProperty('end_date') && shareable.end_date != null){
+           shareable.end_date = "'"+shareable.end_date+"'"; 
+        }
+        else{
+           shareable.end_date = "null";
+        }
+		var queryString = "insert into shareables(shar_name, description, username, state_id, shar_pic_name, start_date, end_date) VALUES ('";
 		queryString = queryString + shareable.shar_name +"', '"+shareable.description+"','"+user.username
-			+"',(select state_id from shareable_states where state_name = '"+shareable.state_name+"'), "+shareable.shar_pic_name+");";
+			+"',(select state_id from shareable_states where state_name = '"+shareable.state_name+"'), "+shareable.shar_pic_name+", "+shareable.start_date+", "+shareable.end_date+");";
 		
 		var conn= mysql.createConnection(dbInfo);
 		conn.query(queryString, function(err, rows, fields){
@@ -376,7 +388,7 @@ module.exports={
 	},
 
 	getAllOfferedShareables: function(dbInfo, fn){
-		var queryString = "SELECT shareables.*, state_name, zip_code from shareables inner join shareable_states on shareables.state_id = shareable_states.state_id inner join users on shareables.username = users.username where state_name = 'offering' or state_name = 'offered_received_request'";
+		var queryString = "SELECT shareables.*, state_name, zip_code from shareables inner join shareable_states on shareables.state_id = shareable_states.state_id inner join users on shareables.username = users.username where state_name = 'offering' or state_name = 'offered_received_request' order by shareables.creation_date desc";
 		var conn= mysql.createConnection(dbInfo);
 		conn.query(queryString, function(err, rows, fields){
 			if(err) fn(err);
@@ -386,7 +398,7 @@ module.exports={
 	},
 
 	getAllRequestedShareables: function(dbInfo, fn){
-		var queryString = "SELECT shareables.*, state_name, zip_code from shareables inner join shareable_states on shareables.state_id = shareable_states.state_id inner join users on shareables.username = users.username where state_name = 'requesting' or state_name = 'requested_received_offer'";
+		var queryString = "SELECT shareables.*, state_name, zip_code from shareables inner join shareable_states on shareables.state_id = shareable_states.state_id inner join users on shareables.username = users.username where state_name = 'requesting' or state_name = 'requested_received_offer' order by shareables.creation_date desc";
 		var conn= mysql.createConnection(dbInfo);
 		conn.query(queryString, function(err, rows, field){
 			if(err) fn(err);

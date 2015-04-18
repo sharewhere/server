@@ -14,7 +14,7 @@ var addUserTesting = false;
 var removeUserTesting = false;
 var getUserTesting = false;
 var getUsersShareablesTesting = false;
-var addShareableTesting = false; //Error when testing this
+var addShareableTesting = false;
 var getShareableTesting = false;
 var offerOnRequestTesting = false;
 var removeSharableTesting = false;
@@ -91,7 +91,9 @@ if(addShareableTesting){
 	shareable = {
 		shar_name: "broom",
 		state_name: "requesting",
-		description: "Oi, I need a broom to sweep me kitchen."
+		description: "Oi, I need a broom to sweep me kitchen.",
+        start_date: "2015-04-18",
+        end_date: "2015-04-23"
 	};
 	uploadingUser = {
 		username: "tj"

@@ -65,6 +65,8 @@ create table shareables (
     username       varchar(30) not null,
     creation_date datetime not null DEFAULT CURRENT_TIMESTAMP,
     shar_pic_name  varchar(255),
+    start_date     date,
+    end_date       date,
     state_id       int,
     primary key (shar_id),
     foreign key (username) references users(username),
