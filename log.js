@@ -22,7 +22,7 @@ module.exports = {
         args.push(arguments[i]);
     }
 
-    args[0] = colors.white.bold("[info] " + args[0])
+    args[0] = colors.white("[info] " + args[0])
 
     console.log.apply(this, args);
   },
@@ -56,6 +56,16 @@ module.exports = {
     }
 
     args[0] = colors.green(args[0])
+
+    console.log.apply(this, args);
+  },
+  debug: function() {
+    var args = [];
+    for(var i = 0; i < arguments.length; i++) {
+        args.push(arguments[i]);
+    }
+
+    args[0] = colors.yellow("[debug] " + args[0])
 
     console.log.apply(this, args);
   },
