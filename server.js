@@ -12,13 +12,36 @@ var multer  = require('multer')
 
 var app = express();
 
+var debugHangup = false;
+
 // ###############################
 // # Middleware
 // ###############################
-app.use(bodyParser());
 app.use(cookieParser('shhhh, very secret'));
+app.use(function(req,res,next){
+    if(debugHangup){
+        log.info("cookie parser finished");
+    }
+    next();
+});
 // 7 days until cookie expiration
 app.use(session({ secret: 'shhhh, very secret', cookie: { maxAge: 604800000 }}));
+app.use(function(req,res,next){
+    if(debugHangup){
+        log.info("session() finished");
+    }
+    next();
+});
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
+app.use(function(req,res,next){
+    if(debugHangup){
+        log.info("bodyparser finished");
+    }
+    next();
+});
 
 // Endpoint logging and generic errors
 app.use(function(req, res, next){
@@ -334,7 +357,7 @@ app.post('/makeshareablerequest', multer({ dest: __dirname+'/images/'}), restric
 app.post('/makeshareableoffer', multer({ dest: __dirname+'/images/'}), restrict, function(req, res) {
     //
     // debug code
-    log.info('Attempting to make a shareable request.');
+    log.info('Attempting to make a shareable offer.');
     //
     if(!req.body.shar_name) {
         res.json({
