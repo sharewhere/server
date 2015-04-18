@@ -294,9 +294,11 @@ app.get('/viewreqoffshareable', restrict, function(req, res) {
         if(trnsction.length<1) trnsction = null;
         if(shrble.username == req.session.user.username) {
             res.json({success: true, shareable : shrble, transactions : trnsction});
+            return;
         }
         else {
-            res.json({success: true, shareable : shrble, transaction : trnsction});
+            res.json({success: true, shareable : shrble, transaction : trnsction[0]});
+            return;
         }
     });
 });
