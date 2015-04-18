@@ -134,38 +134,57 @@ if(getShareableTesting){
 }
 
 if(offerOnRequestTesting){
-	var shar_id = 1;
-	sql_queries.getShareable(dbInfo, 1, function(err, shareable){
+    offerOnRequestTest();
+}
+function offerOnRequestTest(){
+	var shar_id = 3;
+    var username = "jeff"
+	sql_queries.getShareable(dbInfo, shar_id, function(err, shareable){
 		if(err){
 				console.log("error in test offerOnRequestTesting: "+err);
-			}
-			console.log("Shareable with shar_id = 1 before \"offerOnRequest\"\n %j", shareable)
-		});
-	sql_queries.offerOnRequest(dbInfo, shar_id);
-	sql_queries.getShareable(dbInfo, 1, function(err, shareable){
-		if(err){
-				console.log("error in test offerOnRequestTesting: "+err);
-			}
-			console.log("\nShareable with shar_id = 1 after \"offerOnRequest\"\n %j", shareable)
-		});
+		}
+        console.log("\nShareable with shar_id = "+shar_id+" before \"offerOnRequest\"\n %j", shareable)
+            
+        sql_queries.offerOnRequest(dbInfo, shar_id, username, function(err, rows, fields){
+            if(err){
+                    console.log("error in test offerOnRequestTesting: "+err);
+            }
+                
+            sql_queries.getShareable(dbInfo, shar_id, function(err, shareable){
+            if(err){
+                    console.log("error in test offerOnRequestTesting: "+err);
+                }
+                console.log("\nShareable with shar_id = "+shar_id+" after \"offerOnRequest\"\n %j", shareable)
+            });
+        });
+    });
 }
 
 if(requestOnOfferTesting){
+    requestOnOfferTest();
+}
+function requestOnOfferTest(){
 	var shar_id = 2;
-	sql_queries.getShareable(dbInfo, 2, function(err, shareable){
+    var username = "jeff";
+	sql_queries.getShareable(dbInfo, shar_id, function(err, shareable){
 		if(err){
 				console.log("error in test requestOnOfferTesting: "+err);
-			}
-		console.log("Shareable with shar_id = 2 before \"requestOnOffer\"\n %j", shareable)
-			
-		});
-	sql_queries.requestOnOffer(dbInfo, shar_id);
-	sql_queries.getShareable(dbInfo, 2, function(err, shareable){
-		if(err){
-				console.log("error in test requestOnOfferTesting: "+err);
-			}
-		console.log("\nShareable with shar_id = 2 after \"requestOnOffer\"\n %j", shareable)
-		});
+		}
+        console.log("\nShareable with shar_id = "+shar_id+" before \"requestOnOffer\"\n %j", shareable)
+            
+        sql_queries.requestOnOffer(dbInfo, shar_id, username, function(err, rows, fields){
+            if(err){
+                    console.log("error in test requestOnOfferTesting: "+err);
+            }
+                
+            sql_queries.getShareable(dbInfo, shar_id, function(err, shareable){
+            if(err){
+                    console.log("error in test requestOnOfferTesting: "+err);
+                }
+                console.log("\nShareable with shar_id = "+shar_id+" after \"requestOnOffer\"\n %j", shareable)
+            });
+        });
+    });
 }
 
 if(removeSharableTesting){

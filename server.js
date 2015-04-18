@@ -519,6 +519,48 @@ app.post('/completeshareable', restrict, function(req, res){
   });
 });
 
+app.post('/offeronrequest', restrict, function(req, res){
+    if(!req.body.shar_id){
+        res.json({
+           success : false,
+           error_message : "shar_id not set in route offeronrequest. shar_id must be the shareable that is being requested."
+        });
+    }
+    
+    sqlQueries.offerOnRequest(dbInfo, req.body.shar_id, req.session.user.username, function(err, rows, fields){
+        if(err) {
+            res.json({
+                success : false,
+                error_message : err
+            })
+        }
+        res.json({
+            success : true
+        })
+    })
+});
+
+app.post('/requestonoffer', restrict, function(req, res){
+    if(!req.body.shar_id){
+        res.json({
+           success : false,
+           error_message : "shar_id not set in route requestonoffer. shar_id must be the shareable that is being offered."
+        });
+    }
+    
+    sqlQueries.requestOnOffer(dbInfo, req.body.shar_id, req.session.user.username, function(err, rows, fields){
+        if(err) {
+            res.json({
+                success : false,
+                error_message : err
+            })
+        }
+        res.json({
+            success : true
+        })
+    })
+});
+
 // ###############################
 // # Startup
 // ###############################
