@@ -291,6 +291,7 @@ app.get('/viewreqoffshareable', restrict, function(req, res) {
             })
             return;
         }
+        if(trnsction.length<1) trnsction = null;
         if(shrble.username == req.session.user.username) {
             res.json({shareable : shrble, transactions : trnsction});
         }
