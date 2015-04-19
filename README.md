@@ -1,8 +1,10 @@
-# server
-Backend for ShareWhere.
+ShareWhereServer
 
-To get this running on Node.js make sure Node.js is installed and the Express package has been installed.
-Ensure Node.js is installed by typing "Node -v"
+This is the server for the ShareWhere application.
 
-To get this hello world code to run navigate to the root folder and type "node index.js"
-Node simply executes the code written in the index.js file.
+To get this running on your computer make sure Node.js is installed.
+Navigate to the root of the repository in command line or terminal and type "npm install",
+this will sort out all of the ShareWhereServer dependencies.
+
+To run the server use the command "node server.js" to run in debug mode use,
+"node debug server.js"

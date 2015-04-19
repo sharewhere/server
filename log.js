@@ -3,7 +3,7 @@
  * Now with more colors!
  */
 
-var colors = require("colors.js/safe")
+var colors = require("colors/safe")
 
 module.exports = {
   error: function() {

@@ -1,4 +1,4 @@
-var colors = require("colors.js/safe")
+var colors = require("colors/safe")
 
 var shareWhereLogo =
 "  ___ _               __      ___                \n" +
