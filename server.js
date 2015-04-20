@@ -291,17 +291,25 @@ app.get('/viewreqoffshareable', restrict, function(req, res) {
             })
             return;
         }
-        if(trnsction.length == 0) {
-            res.json({success: true, shareable : shrble, transactions : null});
-            return;
-        }
-        else if(shrble.username == req.session.user.username) {
-            res.json({success: true, shareable : shrble, transactions : trnsction});
-            return;
+        if(shrble.username == req.session.user.username) {
+            if(trnsction.length <1) {
+                res.json({success: true, shareable : shrble, transactions : null});
+                return;
+            }
+            else{
+                res.json({success: true, shareable : shrble, transactions : trnsction});
+                return;
+            }
         }
         else {
-            res.json({success: true, shareable : shrble, transaction : trnsction[0]});
-            return;
+            if(trnsction.length <1) {
+                res.json({success: true, shareable : shrble, transaction : null});
+                return;
+            }
+            else{
+                res.json({success: true, shareable : shrble, transaction : trnsction[0]});
+                return;
+            }
         }
     });
 });
