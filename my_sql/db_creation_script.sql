@@ -88,7 +88,8 @@ create table transactions (
 	shar_id        int not null,
     type_id        int not null,
     primary key (trans_id),
-    foreign key (type_id) references transaction_types(type_id)
+    foreign key (type_id) references transaction_types(type_id),
+    UNIQUE(lender, borrower, shar_id)
 );
 
 create table sessions (

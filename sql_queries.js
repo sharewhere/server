@@ -110,8 +110,8 @@ module.exports={
 		}
 		
 		var queryString = "select distinct shareables.shar_id, username, shar_name, description, state_name, creation_date, b.responses from shareables left outer join ( select shar_id, lender, borrower, count(borrower) as responses from transactions group by transactions.shar_id)"+
-		"as b on b.shar_id=shareables.shar_id inner join shareable_states on shareables.state_id = shareable_states.state_id where shareables.state_id in (select state_id from shareable_states where (shareables.username = '"+username+"' and(state_name = 'requesting' or state_name='requested_received_offer'))"+
-		"or (state_name = 'offered_received_request' and b.borrower = '"+username+"'));";
+		" as b on b.shar_id=shareables.shar_id inner join shareable_states on shareables.state_id = shareable_states.state_id where shareables.state_id in (select state_id from shareable_states where (shareables.username = '"+username+"' and(state_name = 'requesting' or state_name='requested_received_offer'))"+
+		" or (state_name = 'offered_received_request' and b.borrower = '"+username+"'));";
 		var conn= mysql.createConnection(dbInfo);
 		conn.query(queryString, function(err, rows, fields){
             fn(err, rows);
@@ -124,8 +124,8 @@ module.exports={
 			fn(new Error("no username set in getUserShareables"));
 		}
 		var queryString = "select distinct shareables.shar_id, username, shar_name, description, state_name, creation_date, b.responses from shareables left outer join ( select shar_id, lender, borrower, count(borrower) as responses from transactions group by transactions.shar_id)"+
-		"as b on b.shar_id=shareables.shar_id inner join shareable_states on shareables.state_id = shareable_states.state_id where shareables.state_id in (select state_id from shareable_states where (shareables.username = '"+username+"' and(state_name = 'offering' or state_name='offered_received_request'))"+
-		"or (state_name = 'requested_received_offer' and b.lender = '"+username+"'));";
+		" as b on b.shar_id=shareables.shar_id inner join shareable_states on shareables.state_id = shareable_states.state_id where shareables.state_id in (select state_id from shareable_states where (shareables.username = '"+username+"' and(state_name = 'offering' or state_name='offered_received_request'))"+
+		" or (state_name = 'requested_received_offer' and b.lender = '"+username+"'));";
 		var conn= mysql.createConnection(dbInfo);
 		conn.query(queryString, function(err, rows, fields){
 			fn(err, rows);
@@ -301,7 +301,7 @@ module.exports={
 	},
 	
 	//TODO whenever this is done it should also insert a row into the transactions table to log the request.
-	offerOnRequest: function(dbInfo, shar_id, username, fn){
+	d: function(dbInfo, shar_id, username, fn){
 		//The shareable has to be in requesting or requested_received_offer
 		//The user must be authenticated and have username defined
 		//Shareable is distinguished by its shar_id field
@@ -320,13 +320,8 @@ module.exports={
 				//Shareable is not in proper state for offering.
 				fn(new Error("Shareable can't be offered in this state: "+shareable.state_name));
 			}
-			var queryString1 = "UPDATE shareables SET state_id = \
-			(select state_id from shareable_states where state_name = 'requested_received_offer') where shar_id = '"
-			+shar_id+"';"
-			var queryString2 = "INSERT INTO transactions \
-				(lender, borrower, shar_id, type_id) \
-			values \
-				('"+username+"', (select username from shareables where shar_id = "+shar_id+"), '"+shar_id+"', (select type_id from transaction_types where type_name = 'request/offer'));";
+			var queryString1 = "UPDATE shareables SET state_id = (select state_id from shareable_states where state_name = 'requested_received_offer') where shar_id = '"+shar_id+"';"
+			var queryString2 = "INSERT INTO transactions (lender, borrower, shar_id, type_id) values('"+username+"', (select username from shareables where shar_id = "+shar_id+"), '"+shar_id+"', (select type_id from transaction_types where type_name = 'request/offer'));";
 			
 			var conn= mysql.createConnection(dbInfo);
 			conn.query(queryString1, function(err, rows, fields){
@@ -356,10 +351,8 @@ module.exports={
 			var queryString1 = "UPDATE shareables SET state_id = "+
 			"(select state_id from shareable_states where state_name = 'offered_received_request') where shar_id = '"
 			+shar_id+"';";
-			var queryString2 = "INSERT INTO transactions \
-				(lender, borrower, shar_id, type_id) \
-			values \
-				((select username from shareables where shar_id = "+shar_id+"), '"+username+"', '"+shar_id+"', (select type_id from transaction_types where type_name = 'request/offer'));";
+			var queryString2 = "INSERT INTO transactions (lender, borrower, shar_id, type_id) values ((select username from shareables where "+
+			"shar_id = "+shar_id+"), '"+username+"', '"+shar_id+"', (select type_id from transaction_types where type_name = 'request/offer'));";
 
 			var conn= mysql.createConnection(dbInfo);
 			conn.query(queryString1, function(err, rows, fields){
