@@ -109,7 +109,7 @@ module.exports={
 			fn(new Error("no username set in getUserShareables"));
 		}
 		
-		var queryString = "select distinct shareables.shar_id, username, shar_name, description, state_name, creation_date, b.responses from shareables left outer join ( select shar_id, lender, borrower, count(borrower) as responses from transactions group by transactions.shar_id)"+
+		var queryString = "select distinct shareables.*, state_name, b.responses from shareables left outer join ( select shar_id, lender, borrower, count(borrower) as responses from transactions group by transactions.shar_id)"+
 		" as b on b.shar_id=shareables.shar_id inner join shareable_states on shareables.state_id = shareable_states.state_id where shareables.state_id in (select state_id from shareable_states where (shareables.username = '"+username+"' and(state_name = 'requesting' or state_name='requested_received_offer'))"+
 		" or (state_name = 'offered_received_request' and b.borrower = '"+username+"'));";
 		var conn= mysql.createConnection(dbInfo);
@@ -123,7 +123,7 @@ module.exports={
 		if(!username){
 			fn(new Error("no username set in getUserShareables"));
 		}
-		var queryString = "select distinct shareables.shar_id, username, shar_name, description, state_name, creation_date, b.responses from shareables left outer join ( select shar_id, lender, borrower, count(borrower) as responses from transactions group by transactions.shar_id)"+
+		var queryString = "select distinct shareables.*, state_name, b.responses from shareables left outer join ( select shar_id, lender, borrower, count(borrower) as responses from transactions group by transactions.shar_id)"+
 		" as b on b.shar_id=shareables.shar_id inner join shareable_states on shareables.state_id = shareable_states.state_id where shareables.state_id in (select state_id from shareable_states where (shareables.username = '"+username+"' and(state_name = 'offering' or state_name='offered_received_request'))"+
 		" or (state_name = 'requested_received_offer' and b.lender = '"+username+"'));";
 		var conn= mysql.createConnection(dbInfo);
