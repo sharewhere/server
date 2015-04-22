@@ -527,14 +527,15 @@ app.post('/completeshareable', restrict, function(req, res){
   }
 
 	sqlQueries.completeShareable(dbInfo, req.body.transID, function(err){
-	  log.info("completed query for completing the shareable.");
 	  if(err) {
+            log.fail("could not complete: " + err);
 		  res.json({
 			success : false,
 			error_message : err
 		  })
 		  return;
 	  }
+            log.success("shareable transaction %d completed", req.body.transID);
 	  res.json({
 		success : true
 	  })

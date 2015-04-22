@@ -301,7 +301,7 @@ module.exports={
 	},
 	
 	//TODO whenever this is done it should also insert a row into the transactions table to log the request.
-	d: function(dbInfo, shar_id, username, fn){
+	offerOnRequest: function(dbInfo, shar_id, username, fn){
 		//The shareable has to be in requesting or requested_received_offer
 		//The user must be authenticated and have username defined
 		//Shareable is distinguished by its shar_id field
