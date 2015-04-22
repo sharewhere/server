@@ -226,7 +226,7 @@ module.exports={
 			return;
 		}
 		
-		var queryString = "select * from transactions where transactions.shar_id = '"+shar_id+"';";
+		var queryString = "select * from transactions inner join transaction_types on transactions.type_id = transaction_types.type_id where transactions.shar_id = '"+shar_id+"';";
 		
 		var conn= mysql.createConnection(dbInfo);
 		conn.query(queryString, function(err, rows, fields){
@@ -249,7 +249,7 @@ module.exports={
 			fn(new Error("No shar_id set in getReqOffTransOther"));
 			return;
 		}
-		var queryString = "select * from transactions where shar_id = '"+shar_id+"' and (lender = '"+username+"' or borrower = '"+username+"');";
+		var queryString = "select * from transactions inner join transaction_types on transactions.type_id = transaction_types.type_id where shar_id = '"+shar_id+"' and (lender = '"+username+"' or borrower = '"+username+"');";
 		
 		var conn= mysql.createConnection(dbInfo);
 		conn.query(queryString, function(err, row, fields){

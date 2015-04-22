@@ -87,18 +87,11 @@ create table transactions (
 	borrower       varchar(30) not null,
 	shar_id        int not null,
     type_id        int not null,
+    trans_creation_date datetime not null DEFAULT CURRENT_TIMESTAMP,
     primary key (trans_id),
     foreign key (type_id) references transaction_types(type_id),
     UNIQUE(lender, borrower, shar_id)
 );
-
-create table sessions (
-     session_id     varchar(48) not null,
-     username       varchar(30) not null,
-     primary key (session_id),
-     foreign key (username) references users(username)
-);
-
 
 #Dummy data for testing the database
 
@@ -114,6 +107,12 @@ INSERT INTO users
 VALUES 
 ( 'tj', '12345678901234567890', 'fdfd75ed7db53c8c4f44d715bc64e8e8cff070ef', CURDATE(), CURDATE(), '32816', 'c@c.c'),
 ( 'lisa', '12345678901234567890', 'fdfd75ed7db53c8c4f44d715bc64e8e8cff070ef', CURDATE(), CURDATE(), '32816', 'cf@c.c'),
+( 'fred', '12345678901234567890', 'fdfd75ed7db53c8c4f44d715bc64e8e8cff070ef', CURDATE(), CURDATE(), '32816', 'cf@c.c'),
+( 'frank', '12345678901234567890', 'fdfd75ed7db53c8c4f44d715bc64e8e8cff070ef', CURDATE(), CURDATE(), '32816', 'cf@c.c'),
+( 'tim', '12345678901234567890', 'fdfd75ed7db53c8c4f44d715bc64e8e8cff070ef', CURDATE(), CURDATE(), '32816', 'cf@c.c'),
+( 'bill', '12345678901234567890', 'fdfd75ed7db53c8c4f44d715bc64e8e8cff070ef', CURDATE(), CURDATE(), '32816', 'cf@c.c'),
+( 'jimmy', '12345678901234567890', 'fdfd75ed7db53c8c4f44d715bc64e8e8cff070ef', CURDATE(), CURDATE(), '32816', 'cf@c.c'),
+( 'teddy', '12345678901234567890', 'fdfd75ed7db53c8c4f44d715bc64e8e8cff070ef', CURDATE(), CURDATE(), '32816', 'cf@c.c'),
 ( 'jeff', '12345678901234567890', 'fdfd75ed7db53c8c4f44d715bc64e8e8cff070ef', CURDATE(), CURDATE(), '32816', 'd@d.d');
 
 INSERT INTO shareable_states 
