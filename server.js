@@ -563,6 +563,7 @@ app.post('/offeronrequest', restrict, function(req, res){
         res.json({
             success : true
         })
+        return;
     })
 });
 
@@ -577,15 +578,25 @@ app.post('/requestonoffer', restrict, function(req, res){
     
     sqlQueries.requestOnOffer(dbInfo, req.body.shar_id, req.session.user.username, function(err, rows, fields){
         if(err) {
+
+        log.fail("%s failed to request offered shareable %d",
+          req.session.user.username,
+          req.body.shar_id);
+
             res.json({
                 success : false,
                 error_message : err
             })
             return;
         }
+        log.success("%s successfully requested offered shareable %d",
+          req.session.user.username,
+          req.body.shar_id);
+
         res.json({
             success : true
         })
+        return;
     })
 });
 
