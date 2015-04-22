@@ -9,10 +9,22 @@ var util = require('./util');
 var log = require('./log');
 var fs = require('fs');
 var multer  = require('multer')
+var SessionStore = require('express-mysql-session')
 
 var app = express();
 
 var debugHangup = false;
+
+//sql connection info
+var dbInfo = {
+  host     : 'localhost',
+  user     : 'ShareWhereUser',
+  password : 'N3onIc3d',
+  database : 'ShareWhereTest',
+  dateStrings : true
+}
+
+var sessionStore = new SessionStore(dbInfo)
 
 // ###############################
 // # Middleware
@@ -24,8 +36,15 @@ app.use(function(req,res,next){
     }
     next();
 });
+
 // 7 days until cookie expiration
-app.use(session({ secret: 'shhhh, very secret', cookie: { maxAge: 604800000 }}));
+app.use(session({
+    secret: 'shhhh, very secret',
+    store: sessionStore,
+    resave: true,
+    saveUninitialized: true,
+    cookie: { maxAge: 604800000 }
+}));
 app.use(function(req,res,next){
     if(debugHangup){
         log.info("session() finished");
@@ -60,15 +79,6 @@ app.use(function(req, res, next){
 });
 
 app.use('/images', express.static('images'));
-
-//sql connection info
-var dbInfo = {
-  host     : 'localhost',
-  user     : 'ShareWhereUser',
-  password : 'N3onIc3d',
-  database : 'ShareWhereTest',
-  dateStrings : true
-}
 
  //Debug purposes
  //True means use the sql database
