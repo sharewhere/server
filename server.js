@@ -395,11 +395,8 @@ app.post('/makeshareablerequest', multer({ dest: __dirname+'/images/'}), restric
 });
 
 app.post('/makeshareableoffer', multer({ dest: __dirname+'/images/'}), restrict, function(req, res) {
-    //
-    // debug code
-    log.info('Attempting to make a shareable offer.');
-    //
     if(!req.body.shar_name) {
+        log.fail("shar_name wasn't set")
         res.json({
             success : false,
             error_message : "shar_name not set."
@@ -451,6 +448,7 @@ app.post('/makeshareableoffer', multer({ dest: __dirname+'/images/'}), restrict,
     };
     sqlQueries.apiAddShareable(dbInfo, shareable, uploadingUser,  function(err, shareable, fields){
         if(err){
+            log.error("Failed to create the shareable: " + err);
             res.json({
                 success : false,
                 error_message : "error in route makeshareablerequest: "+err
