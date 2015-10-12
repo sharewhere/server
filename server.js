@@ -10,6 +10,7 @@ var log = require('./log');
 var fs = require('fs');
 var multer  = require('multer')
 var SessionStore = require('express-mysql-session')
+var morgan = require('morgan')
 
 var app = express();
 
@@ -63,7 +64,7 @@ app.use(function(req,res,next){
 });
 
 // Endpoint logging and generic errors
-app.use(function(req, res, next){
+/*app.use(function(req, res, next){
   var err = req.session.error
     , msg = req.session.success;
   delete req.session.error;
@@ -76,7 +77,9 @@ app.use(function(req, res, next){
   log.endpoint(req.ip, req.method, req.url);
 
   next();
-});
+});*/
+// Log incoming requests
+app.use(morgan('combined'));
 
 app.use('/images', express.static('images'));
 
